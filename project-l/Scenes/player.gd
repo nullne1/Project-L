@@ -20,6 +20,7 @@ var enemyToHit: CharacterBody2D;
 var rolling: bool;
 var doingAction: bool;
 
+
 signal attack;
 
 func _ready() -> void:
