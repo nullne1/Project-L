@@ -19,7 +19,9 @@ var projectile_path = preload("res://Scenes/arrow.tscn");
 var enemyToHit: CharacterBody2D;
 var rolling: bool;
 var doingAction: bool;
-
+var hoveredTexture = load("res://Assets/topdown_textures/hoveredZombie.png");
+var normalTexture = load("res://Assets/topdown_textures/zombie.png");
+var hoveredStack = [];
 
 signal attack;
 
@@ -86,9 +88,19 @@ func move() -> void:
 func _on_enemy_mouse_entered(enemyNodePath : NodePath) -> void:
 	enemy = get_node(enemyNodePath);
 	hover = true;
+	var prevHoveredEnemy = hoveredStack.pop_front()
+	if (prevHoveredEnemy == null):
+		print(hoveredStack)
+		enemy.get_child(0).texture = hoveredTexture;
+		hoveredStack.push_front(enemy);	
+	else:
+		prevHoveredEnemy.get_child(0).texture = normalTexture;
 
 func _on_enemy_mouse_exited() -> void:
 	hover = false;
+	print(hoveredStack)
+	enemy.get_child(0).texture = normalTexture;
+	hoveredStack.pop_front();
 	
 func getEnemyToHit() -> CharacterBody2D:
 	return enemyToHit;
