@@ -19,6 +19,7 @@ var projectile_path = preload("res://Scenes/arrow.tscn");
 var enemyToHit: CharacterBody2D;
 var rolling: bool;
 var doingAction: bool;
+var gitTest;
 
 signal attack;
 
