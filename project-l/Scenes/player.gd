@@ -19,16 +19,18 @@ var projectile_path = preload("res://Scenes/arrow.tscn");
 var enemyToHit: CharacterBody2D;
 var rolling: bool;
 var doingAction: bool;
-var hoveredTexture = load("res://Assets/topdown_textures/hoveredZombie.png");
-var normalTexture = load("res://Assets/topdown_textures/zombie.png");
+var hoveredTexture = preload("res://Assets/topdown_textures/hoveredZombie.png");
+var normalTexture = preload("res://Assets/topdown_textures/zombie.png");
 var hoveredStack = [];
+var onRollPosition: Vector2
+var rolled = false;
 
 signal attack;
 
 func _ready() -> void:
-	print(projectile_path)
 	attack_speed_cd.wait_time = 0.5;
 	roll_duration.wait_time = 0.2;
+	roll_cd.wait_time = 1;
 	
 func _physics_process(delta: float) -> void:
 	attacking = !attack_animation.is_stopped();
@@ -58,13 +60,21 @@ func _physics_process(delta: float) -> void:
 		queue_free()
 
 func roll() -> void:
-	rolling = true;
+	if (!roll_cd.is_stopped()):
+		return;
 	target = get_global_mouse_position();
-	if (!attacking):
-		look_at(target);
-	print(target - position)
-	velocity = (target - position).normalized() * (ms + 500);
-	roll_duration.start();
+	print(target.distance_to(position) > 150)
+	if (target.distance_to(position) > 150):
+		rolled = true;
+		if (!attacking):
+			look_at(target);
+		roll_cd.start()
+		rolling = true;
+		velocity = (target - position).normalized() * (ms + 500);
+		roll_duration.start();
+	else:
+		print("Hello")
+		rolled = false;
 
 func shoot() -> void:
 	emit_signal("attack");
@@ -80,31 +90,34 @@ func shoot() -> void:
 	velocity = Vector2(0, 0);
 
 func move() -> void:
+	rolled = false;
 	target = get_global_mouse_position();
 	if (!attacking):
 		look_at(target);
 	velocity = (target - position).normalized() * ms;
+
 
 func _on_enemy_mouse_entered(enemyNodePath : NodePath) -> void:
 	enemy = get_node(enemyNodePath);
 	hover = true;
 	var prevHoveredEnemy = hoveredStack.pop_front()
 	if (prevHoveredEnemy == null):
-		print(hoveredStack)
 		enemy.get_child(0).texture = hoveredTexture;
 		hoveredStack.push_front(enemy);	
 	else:
 		prevHoveredEnemy.get_child(0).texture = normalTexture;
-
+	
 func _on_enemy_mouse_exited() -> void:
 	hover = false;
-	print(hoveredStack)
-	enemy.get_child(0).texture = normalTexture;
-	hoveredStack.pop_front();
+	if (enemy):
+		print(hoveredStack)
+		enemy.get_child(0).texture = normalTexture;
+		hoveredStack.pop_front();
 	
 func getEnemyToHit() -> CharacterBody2D:
 	return enemyToHit;
 	
 func _on_roll_duration_timeout() -> void:
 	rolling = false;
-	velocity = (target - position).normalized() * ms;
+	if (rolled):
+		velocity = (target - position).normalized() * ms;
