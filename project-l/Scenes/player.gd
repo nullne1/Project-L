@@ -28,14 +28,14 @@ var rolled = false;
 signal attack;
 
 func _ready() -> void:
-	attack_speed_cd.wait_time = 0.5;
+	attack_speed_cd.wait_time = 0.1;
 	roll_duration.wait_time = 0.2;
 	roll_cd.wait_time = 1;
 	
 func _physics_process(delta: float) -> void:
 	attacking = !attack_animation.is_stopped();
 
-	if (hover && enemy && Input.is_action_pressed("attack") && attack_speed_cd.is_stopped()):
+	if (hover && enemy && Input.is_action_just_pressed("attack") && attack_speed_cd.is_stopped()):
 		shoot();
 
 	if (Input.is_action_just_pressed("move") && (roll_duration.time_left < 0.1 || !rolling)):
@@ -58,6 +58,7 @@ func _physics_process(delta: float) -> void:
 	# death
 	if (health <= 0):
 		queue_free()
+		
 
 func roll() -> void:
 	if (!roll_cd.is_stopped()):
@@ -110,7 +111,6 @@ func _on_enemy_mouse_entered(enemyNodePath : NodePath) -> void:
 func _on_enemy_mouse_exited() -> void:
 	hover = false;
 	if (enemy):
-		print(hoveredStack)
 		enemy.get_child(0).texture = normalTexture;
 		hoveredStack.pop_front();
 	
