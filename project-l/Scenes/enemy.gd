@@ -3,7 +3,7 @@ extends CharacterBody2D
 @onready var hp := 100;
 var ms := 200;
 @onready var player: CharacterBody2D = $"../../User/Player"
-@onready var enemy_health_bar: TextureProgressBar = %EnemyHealthBar
+@onready var enemy_health_bar: TextureProgressBar = $EnemyHealthBar
 @onready var collision_shape_2d: CollisionShape2D = $CollisionShape2D
 
 

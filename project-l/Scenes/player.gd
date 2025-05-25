@@ -3,42 +3,41 @@ extends CharacterBody2D
 var health := 100;
 var ms := 350;
 var target := position;
-var hover: bool;
+var hovering_enemy: bool;
 @onready var mob_manager: Node2D = %MobManager
 @onready var attack_speed_cd: Timer = $AttackSpeedCD
 @onready var attack_animation: Timer = $AttackAnimation
 var attacking: bool;
 var enemy: CharacterBody2D;
-@onready var attackSpeed = attack_speed_cd.wait_time;
 @onready var enemies = mob_manager.enemies;
 @onready var i_time: Timer = $"I-time"
 @onready var player_health_bar: TextureProgressBar = %PlayerHealthBar
 @onready var roll_cd: Timer = $RollCD
 @onready var roll_duration: Timer = $RollDuration
 var projectile_path = preload("res://Scenes/arrow.tscn");
-var enemyToHit: CharacterBody2D;
+var enemy_to_hit: CharacterBody2D;
 var rolling: bool;
-var doingAction: bool;
-var hoveredTexture = preload("res://Assets/topdown_textures/hoveredZombie.png");
-var normalTexture = preload("res://Assets/topdown_textures/zombie.png");
-var hoveredStack = [];
-var onRollPosition: Vector2
+var doing_action: bool;
+var hovered_texture = preload("res://Assets/topdown_textures/hoveredZombie.png");
+var normal_texture = preload("res://Assets/topdown_textures/zombie.png");
+var hovered_stack: Array = [];
+var on_roll_position: Vector2
 var rolled = false;
+var attack_speed: float = 1.0 / 2.5;
 
 signal attack;
 
 func _ready() -> void:
-	attack_speed_cd.wait_time = 0.1;
+	attack_speed_cd.wait_time = attack_speed;
 	roll_duration.wait_time = 0.2;
 	roll_cd.wait_time = 1;
 	
 func _physics_process(delta: float) -> void:
 	attacking = !attack_animation.is_stopped();
-
-	if (hover && enemy && Input.is_action_just_pressed("attack") && attack_speed_cd.is_stopped()):
+	if (hovering_enemy && enemy && Input.is_action_just_pressed("attack") && attack_speed_cd.is_stopped()):
 		shoot();
 
-	if (Input.is_action_just_pressed("move") && (roll_duration.time_left < 0.1 || !rolling)):
+	if (Input.is_action_pressed("move") && (roll_duration.time_left < 0.1 || !rolling)):
 		move();
 
 	if (Input.is_action_just_pressed("roll")):
@@ -58,8 +57,7 @@ func _physics_process(delta: float) -> void:
 	# death
 	if (health <= 0):
 		queue_free()
-		
-
+	
 func roll() -> void:
 	if (!roll_cd.is_stopped()):
 		return;
@@ -79,7 +77,7 @@ func roll() -> void:
 
 func shoot() -> void:
 	emit_signal("attack");
-	enemyToHit = enemy;
+	enemy_to_hit = enemy;
 	look_at(enemy.position);
 	var projectile = projectile_path.instantiate();
 	projectile.direction = rotation;
@@ -87,6 +85,7 @@ func shoot() -> void:
 	projectile.global_rotation = global_rotation;
 	get_parent().add_child(projectile);
 	attack_animation.start();
+	attack_speed_cd.wait_time = 1/4;
 	attack_speed_cd.start();
 	velocity = Vector2(0, 0);
 
@@ -97,27 +96,45 @@ func move() -> void:
 		look_at(target);
 	velocity = (target - position).normalized() * ms;
 
-
-func _on_enemy_mouse_entered(enemyNodePath : NodePath) -> void:
+func _on_click_hitbox_mouse_entered(enemyNodePath : NodePath):
+	print("entered")
 	enemy = get_node(enemyNodePath);
-	hover = true;
-	var prevHoveredEnemy = hoveredStack.pop_front()
-	if (prevHoveredEnemy == null):
-		enemy.get_child(0).texture = hoveredTexture;
-		hoveredStack.push_front(enemy);	
+	hovering_enemy = true;
+	var prev_hovered_enemy = hovered_stack.pop_front();
+	# if no enemy was being hovered
+	if (prev_hovered_enemy == null):
+		enemy.get_child(0).texture = hovered_texture;
+		hovered_stack.push_front(enemy);	
 	else:
-		prevHoveredEnemy.get_child(0).texture = normalTexture;
-	
-func _on_enemy_mouse_exited() -> void:
-	hover = false;
-	if (enemy):
-		enemy.get_child(0).texture = normalTexture;
-		hoveredStack.pop_front();
+		prev_hovered_enemy.get_child(0).texture = normal_texture;
+		enemy.get_child(0).texture = hovered_texture;
+
+func _on_click_hitbox_mouse_exited():
+	print("exited")
+	hovering_enemy = false;
+	hovered_stack.pop_front();
+	enemy.get_child(0).texture = normal_texture;
 	
 func getEnemyToHit() -> CharacterBody2D:
-	return enemyToHit;
+	return enemy_to_hit;
 	
 func _on_roll_duration_timeout() -> void:
 	rolling = false;
 	if (rolled):
 		velocity = (target - position).normalized() * ms;
+
+#func _on_enemy_mouse_entered(enemyNodePath : NodePath) -> void:
+	#enemy = get_node(enemyNodePath);
+	#hovering_enemy = true;
+	#var prevHoveredEnemy = hovered_stack.pop_front()
+	#if (prevHoveredEnemy == null):
+		#enemy.get_child(0).texture = hovered_texture;
+		#hovered_stack.push_front(enemy);	
+	#else:
+		#prevHoveredEnemy.get_child(0).texture = normal_texture;
+	#
+#func _on_enemy_mouse_exited() -> void:
+	#hovering_enemy = false;
+	#if (enemy):
+		#enemy.get_child(0).texture = normal_texture;
+		#hovered_stack.pop_front();
