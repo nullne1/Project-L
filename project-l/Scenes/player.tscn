@@ -256,9 +256,7 @@ texture = ExtResource("1_4flbx")
 [node name="Camera2D" type="Camera2D" parent="."]
 
 [node name="AttackSpeedCD" type="Timer" parent="."]
-wait_time = 0.5
 one_shot = true
-autostart = true
 
 [node name="AttackAnimation" type="Timer" parent="."]
 wait_time = 0.1

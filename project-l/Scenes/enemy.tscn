@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://3j2nug1fn8r2"]
+[gd_scene load_steps=7 format=3 uid="uid://3j2nug1fn8r2"]
 
 [ext_resource type="Script" uid="uid://dtml85ip77sn6" path="res://Scenes/enemy.gd" id="1_1f0kj"]
 [ext_resource type="Texture2D" uid="uid://b800mxcr3l14d" path="res://Assets/topdown_textures/zombie.png" id="1_ymxaj"]
@@ -12,6 +12,10 @@ height = 58.0
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_1f0kj"]
 gradient = SubResource("Gradient_jjvhh")
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_afpow"]
+radius = 23.638
+height = 431.48
+
 [node name="Enemy" type="CharacterBody2D"]
 scale = Vector2(1.1, 1.1)
 input_pickable = true
@@ -24,10 +28,9 @@ texture = ExtResource("1_ymxaj")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-0.5, 0)
 shape = SubResource("CapsuleShape2D_1f0kj")
-disabled = true
+debug_color = Color(3.17663e-06, 0.585575, 0.776292, 0.42)
 
 [node name="EnemyHealthBar" type="TextureProgressBar" parent="."]
-unique_name_in_owner = true
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -45,3 +48,12 @@ texture_progress = SubResource("GradientTexture2D_1f0kj")
 [node name="SubViewport" type="SubViewport" parent="."]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="ClickHitbox" type="Area2D" parent="."]
+position = Vector2(-32, -64)
+scale = Vector2(1.03839, 0.147484)
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="ClickHitbox"]
+position = Vector2(30.8169, 433.945)
+shape = SubResource("CapsuleShape2D_afpow")
+debug_color = Color(0.965163, 0, 0.488374, 0.42)
