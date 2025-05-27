@@ -19,6 +19,7 @@ func _physics_process(delta: float) -> void:
 	
 func _on_area_2d_body_entered(body: Node2D) -> void:
 	var enemyToHit = player.getEnemyToHit();
+	print(enemyToHit)
 	if (body == grass):
 		queue_free();
 	elif (body == enemyToHit):

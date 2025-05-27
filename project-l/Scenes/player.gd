@@ -20,7 +20,7 @@ var rolling: bool;
 var doing_action: bool;
 var hovered_texture = preload("res://Assets/topdown_textures/hoveredZombie.png");
 var normal_texture = preload("res://Assets/topdown_textures/zombie.png");
-var hovered_stack: Array = [];
+var hovered_enemies: Array = [];
 var on_roll_position: Vector2
 var rolled = false;
 var attack_speed: float = 1.0 / 2.5;
@@ -62,7 +62,6 @@ func roll() -> void:
 	if (!roll_cd.is_stopped()):
 		return;
 	target = get_global_mouse_position();
-	print(target.distance_to(position) > 150)
 	if (target.distance_to(position) > 150):
 		rolled = true;
 		if (!attacking):
@@ -72,7 +71,6 @@ func roll() -> void:
 		velocity = (target - position).normalized() * (ms + 500);
 		roll_duration.start();
 	else:
-		print("Hello")
 		rolled = false;
 
 func shoot() -> void:
@@ -97,26 +95,41 @@ func move() -> void:
 	velocity = (target - position).normalized() * ms;
 
 func _on_click_hitbox_mouse_entered(enemyNodePath : NodePath):
-	print("entered")
 	enemy = get_node(enemyNodePath);
 	hovering_enemy = true;
-	var prev_hovered_enemy = hovered_stack.pop_front();
-	# if no enemy was being hovered
-	if (prev_hovered_enemy == null):
+	hovered_enemies.append(enemy);
+	# normal case where you hover and unhover
+	if (hovered_enemies.size() == 1):
 		enemy.get_child(0).texture = hovered_texture;
-		hovered_stack.push_front(enemy);	
-	else:
-		prev_hovered_enemy.get_child(0).texture = normal_texture;
+	# case where user mouse enters enemy through another enemy
+	elif (hovered_enemies.size() == 2):
 		enemy.get_child(0).texture = hovered_texture;
-
+		if (hovered_enemies.get(0)):
+			hovered_enemies.get(0).get_child(0).texture == normal_texture;
+		
 func _on_click_hitbox_mouse_exited():
-	print("exited")
 	hovering_enemy = false;
-	hovered_stack.pop_front();
-	enemy.get_child(0).texture = normal_texture;
+	var prev_enemy = hovered_enemies.pop_at(0);
+	# hovered enemy through 2 other enemies
+	if (hovered_enemies.size() == 2):
+		hovering_enemy = true;
+		var prev_prev_enemy = hovered_enemies.pop_at(0);
+		enemy.get_child(0).texture = hovered_texture;
+		if (prev_enemy):
+			prev_enemy.get_child(0).texture = normal_texture;
+		if (prev_prev_enemy):
+			prev_prev_enemy.get_child(0).texture = normal_texture;
+	# hovered enemy though another enemy
+	if (hovered_enemies.size() == 1):
+		hovering_enemy = true;
+		enemy.get_child(0).texture = hovered_texture;
+		if (prev_enemy):
+			prev_enemy.get_child(0).texture = normal_texture;
+	else:
+		enemy.get_child(0).texture = normal_texture;
 	
 func getEnemyToHit() -> CharacterBody2D:
-	return enemy_to_hit;
+	return enemy;
 	
 func _on_roll_duration_timeout() -> void:
 	rolling = false;
