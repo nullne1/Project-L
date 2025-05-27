@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://3j2nug1fn8r2"]
+[gd_scene load_steps=8 format=3 uid="uid://3j2nug1fn8r2"]
 
 [ext_resource type="Script" uid="uid://dtml85ip77sn6" path="res://Scenes/enemy.gd" id="1_1f0kj"]
 [ext_resource type="Texture2D" uid="uid://b800mxcr3l14d" path="res://Assets/topdown_textures/zombie.png" id="1_ymxaj"]
@@ -13,8 +13,11 @@ height = 58.0
 gradient = SubResource("Gradient_jjvhh")
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_afpow"]
-radius = 23.638
-height = 431.48
+radius = 24.5135
+height = 419.152
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_1f0kj"]
+radius = 43.6742
 
 [node name="Enemy" type="CharacterBody2D"]
 scale = Vector2(1.1, 1.1)
@@ -57,3 +60,12 @@ scale = Vector2(1.03839, 0.147484)
 position = Vector2(30.8169, 433.945)
 shape = SubResource("CapsuleShape2D_afpow")
 debug_color = Color(0.965163, 0, 0.488374, 0.42)
+
+[node name="AttackRange" type="Area2D" parent="."]
+visible = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackRange"]
+shape = SubResource("CircleShape2D_1f0kj")
+debug_color = Color(1, 0.152233, 0.0993905, 0.42)
+
+[connection signal="area_entered" from="AttackRange" to="." method="_on_attack_range_area_entered"]

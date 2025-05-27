@@ -15,3 +15,6 @@ func _physics_process(delta: float) -> void:
 		move_and_collide(delta * velocity);
 	if (hp <= 0):
 		queue_free();
+
+func _on_attack_range_area_entered(area: Area2D) -> void:
+	pass # Replace with function body.

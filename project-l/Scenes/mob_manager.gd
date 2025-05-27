@@ -17,7 +17,7 @@ var viewport : Vector2;
 var distance_factor = 75;
 
 func _ready() -> void:
-	spawn_rate.wait_time = 1;
+	spawn_rate.wait_time = 0.5;
 
 func spawn(enemy, n, spawnPos) -> void:
 	enemy = Enemy.instantiate() as CharacterBody2D;
