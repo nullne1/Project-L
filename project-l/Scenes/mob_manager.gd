@@ -1,7 +1,10 @@
 extends Node2D
 
-@onready var player: CharacterBody2D = %Player
 @export var Enemy = load("res://Scenes/enemy.tscn");
+
+@onready var player: CharacterBody2D = %Player
+@onready var spawn_rate = $SpawnRate;
+
 var enemy: CharacterBody2D;
 var enemies := Array();
 var hover := false;
@@ -13,13 +16,12 @@ var x : int;
 var y : int;
 var pos : Vector2;
 var viewport : Vector2;
-@export var spawn_rate: Timer;
 var distance_factor = 75;
 
 func _ready() -> void:
-	spawn_rate.wait_time = 0.5;
+	spawn_rate.wait_time = 5;
 
-func spawn(enemy, n, spawnPos) -> void:
+func spawn(spawnPos) -> void:
 	enemy = Enemy.instantiate() as CharacterBody2D;
 	add_child(enemy);
 	enemy.global_position = spawnPos;
@@ -28,7 +30,7 @@ func spawn(enemy, n, spawnPos) -> void:
 	click_hitbox.mouse_entered.connect(player._on_click_hitbox_mouse_entered.bind(enemy.get_path()));
 	click_hitbox.mouse_exited.connect(player._on_click_hitbox_mouse_exited);
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if (spawn_rate.is_stopped()):
 		pos = player.position;
 		viewport = get_viewport().size;
@@ -49,6 +51,6 @@ func _process(delta: float) -> void:
 			3:
 				x = rng.randi_range(pos.x - viewport.x / 2, pos.x + viewport.x / 2);
 				y = rng.randi_range(pos.y - viewport.y / 2 - distance_factor, pos.y - viewport.y / 2 - 50);
-		spawn(enemy, enemy_num, Vector2(x, y));
+		spawn(Vector2(x, y));
 		spawn_rate.start();
 	

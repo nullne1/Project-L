@@ -1,24 +1,27 @@
 extends CharacterBody2D
 
+@onready var mob_manager: Node2D = %MobManager
+@onready var player_health_bar: TextureProgressBar = %PlayerHealthBar
+
+@onready var attack_speed_cd: Timer = $AttackSpeedCD
+@onready var attack_animation: Timer = $AttackAnimation
+@onready var enemies = mob_manager.enemies;
+@onready var i_time: Timer = $"I-time"
+@onready var roll_cd: Timer = $RollCD
+@onready var roll_duration: Timer = $RollDuration
+@onready var collision_shape_2d: CollisionShape2D = $CollisionShape2D
+
 var health := 100;
 var ms := 350;
 var target := position;
 var hovering_enemy: bool;
-@onready var mob_manager: Node2D = %MobManager
-@onready var attack_speed_cd: Timer = $AttackSpeedCD
-@onready var attack_animation: Timer = $AttackAnimation
 var attacking: bool;
 var enemy: CharacterBody2D;
-@onready var enemies = mob_manager.enemies;
-@onready var i_time: Timer = $"I-time"
-@onready var player_health_bar: TextureProgressBar = %PlayerHealthBar
-@onready var roll_cd: Timer = $RollCD
-@onready var roll_duration: Timer = $RollDuration
 var projectile_path = preload("res://Scenes/arrow.tscn");
 var enemy_to_hit: CharacterBody2D;
 var rolling: bool;
 var doing_action: bool;
-var hovered_texture = preload("res://Assets/topdown_textures/hoveredZombie.png");
+var hovered_texture = preload("res://Assets/topdown_textures/hovered_zombie.png");
 var normal_texture = preload("res://Assets/topdown_textures/zombie.png");
 var hovered_enemies: Array = [];
 var on_roll_position: Vector2
@@ -32,7 +35,8 @@ func _ready() -> void:
 	roll_duration.wait_time = 0.2;
 	roll_cd.wait_time = 1;
 	
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
+
 	attacking = !attack_animation.is_stopped();
 	if (hovering_enemy && enemy && Input.is_action_just_pressed("attack") && attack_speed_cd.is_stopped()):
 		shoot();
@@ -58,11 +62,17 @@ func _physics_process(delta: float) -> void:
 	if (health <= 0):
 		queue_free()
 	
+	if (hovered_enemies.size() > 2):
+		for en in hovered_enemies:
+			if (en):
+				en.get_child(0).texture = normal_texture;
+	
 func roll() -> void:
 	if (!roll_cd.is_stopped()):
 		return;
 	target = get_global_mouse_position();
 	if (target.distance_to(position) > 150):
+		collision_shape_2d.disabled = true;
 		rolled = true;
 		if (!attacking):
 			look_at(target);
@@ -75,15 +85,14 @@ func roll() -> void:
 
 func shoot() -> void:
 	emit_signal("attack");
-	enemy_to_hit = enemy;
 	look_at(enemy.position);
 	var projectile = projectile_path.instantiate();
+	projectile.enemy_to_hit = enemy;
 	projectile.direction = rotation;
 	projectile.global_position = global_position;
 	projectile.global_rotation = global_rotation;
 	get_parent().add_child(projectile);
 	attack_animation.start();
-	attack_speed_cd.wait_time = 1/4;
 	attack_speed_cd.start();
 	velocity = Vector2(0, 0);
 
@@ -128,11 +137,12 @@ func _on_click_hitbox_mouse_exited():
 	else:
 		enemy.get_child(0).texture = normal_texture;
 	
-func getEnemyToHit() -> CharacterBody2D:
+func get_enemy_to_hit() -> CharacterBody2D:
 	return enemy;
 	
 func _on_roll_duration_timeout() -> void:
 	rolling = false;
+	collision_shape_2d.disabled = false;
 	if (rolled):
 		velocity = (target - position).normalized() * ms;
 

@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://grv4ku3aga7b"]
 
 [ext_resource type="Script" uid="uid://d2p2mqgvgiabt" path="res://Scenes/arrow.gd" id="1_h5x2m"]
-[ext_resource type="Texture2D" uid="uid://bkeypuxdkifke" path="res://Assets/Samurai_Archer/Arrow.png" id="2_40cdi"]
+[ext_resource type="Texture2D" uid="uid://d3mrb8gdixbkw" path="res://Assets/topdown_textures/Arrow.png" id="2_h5x2m"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_h5x2m"]
 size = Vector2(50, 5)
@@ -10,7 +10,7 @@ size = Vector2(50, 5)
 script = ExtResource("1_h5x2m")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("2_40cdi")
+texture = ExtResource("2_h5x2m")
 
 [node name="Area2D" type="Area2D" parent="."]
 
