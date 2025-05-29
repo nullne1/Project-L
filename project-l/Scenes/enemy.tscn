@@ -5,7 +5,7 @@
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_1f0kj"]
 radius = 20.5
-height = 58.0
+height = 50.9091
 
 [sub_resource type="Gradient" id="Gradient_jjvhh"]
 
@@ -17,7 +17,7 @@ radius = 24.5135
 height = 419.152
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_1f0kj"]
-radius = 43.6742
+radius = 47.3077
 
 [node name="Enemy" type="CharacterBody2D"]
 scale = Vector2(1.1, 1.1)
@@ -56,16 +56,16 @@ texture_progress = SubResource("GradientTexture2D_1f0kj")
 position = Vector2(-32, -64)
 scale = Vector2(1.03839, 0.147484)
 
-[node name="CollisionShape2D2" type="CollisionShape2D" parent="ClickHitbox"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ClickHitbox"]
 position = Vector2(30.8169, 433.945)
 shape = SubResource("CapsuleShape2D_afpow")
 debug_color = Color(0.965163, 0, 0.488374, 0.42)
 
 [node name="AttackRange" type="Area2D" parent="."]
-visible = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AttackRange"]
 shape = SubResource("CircleShape2D_1f0kj")
-debug_color = Color(1, 0.152233, 0.0993905, 0.42)
+debug_color = Color(0, 0.398146, 0.919015, 0.42)
 
 [connection signal="area_entered" from="AttackRange" to="." method="_on_attack_range_area_entered"]
+[connection signal="body_entered" from="AttackRange" to="." method="_on_attack_range_body_entered"]
