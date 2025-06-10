@@ -10,23 +10,29 @@ extends CharacterBody2D
 @onready var roll_cd: Timer = $RollCD
 @onready var roll_duration: Timer = $RollDuration
 @onready var collision_shape_2d: CollisionShape2D = $CollisionShape2D
+@onready var rotation_character: CharacterBody2D = $CharacterBody2D
+@onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
+
+var hovered_texture = preload("res://Assets/topdown_textures/hovered_zombie.png");
+var normal_texture = preload("res://Assets/topdown_textures/zombie.png");
+var projectile_path = preload("res://Scenes/arrow.tscn");
+var target_path = preload("res://Scenes/target.tscn");
 
 var health := 100;
-var ms := 350;
+var ms := 300;
 var target := position;
 var hovering_enemy: bool;
 var attacking: bool;
-var enemy: CharacterBody2D;
-var projectile_path = preload("res://Scenes/arrow.tscn");
-var enemy_to_hit: CharacterBody2D;
 var rolling: bool;
 var doing_action: bool;
-var hovered_texture = preload("res://Assets/topdown_textures/hovered_zombie.png");
-var normal_texture = preload("res://Assets/topdown_textures/zombie.png");
+var enemy: CharacterBody2D;
+var enemy_to_hit: CharacterBody2D;
 var hovered_enemies: Array = [];
 var on_roll_position: Vector2
 var rolled = false;
 var attack_speed: float = 1.0 / 2.5;
+var kinematic_collision: KinematicCollision2D;
+var target_arr = Array();
 
 signal attack;
 
@@ -35,29 +41,34 @@ func _ready() -> void:
 	roll_duration.wait_time = 0.2;
 	roll_cd.wait_time = 1;
 	
-func _physics_process(_delta: float) -> void:
-
+func _physics_process(delta: float) -> void:
 	attacking = !attack_animation.is_stopped();
+	
 	if (hovering_enemy && enemy && Input.is_action_just_pressed("attack") && attack_speed_cd.is_stopped()):
 		shoot();
 
 	if (Input.is_action_pressed("move") && (roll_duration.time_left < 0.1 || !rolling)):
-		move();
+		target = get_global_mouse_position();
+		move(target);
 
 	if (Input.is_action_just_pressed("roll")):
 		roll();
 		
 	if (position.distance_to(target) > 3 && !attacking):
-		move_and_slide();
+		kinematic_collision = move_and_collide(velocity * delta);
+		
+	if (velocity == Vector2(0, 0) || kinematic_collision && kinematic_collision.get_collider()):
+		sprite.play("idle");
+	
 	# abilities
 	# enemy colliding
-	for i in get_slide_collision_count():
-		var collision = get_slide_collision(i)
-		velocity = Vector2(0, 0);
-		if (collision.get_collider() in enemies && i_time.time_left == 0):
-			player_health_bar.value -= 0;
-			health -= 0;
-			i_time.start()
+	#for i in get_slide_collision_count():
+		#var collision = get_slide_collision(i)
+		#velocity = Vector2(0, 0);
+		#if (collision.get_collider() in enemies && i_time.time_left == 0):
+			#player_health_bar.value -= 0;
+			#health -= 0;
+			#i_time.start()
 	# death
 	if (health <= 0):
 		queue_free()
@@ -65,43 +76,60 @@ func _physics_process(_delta: float) -> void:
 	if (hovered_enemies.size() > 2):
 		for en in hovered_enemies:
 			if (en):
-				en.get_child(0).texture = normal_texture;
+				en.find_child("Sprite2D").texture = normal_texture;
 	
 func roll() -> void:
 	if (!roll_cd.is_stopped()):
 		return;
 	target = get_global_mouse_position();
+	print(position.angle_to(target))
 	if (target.distance_to(position) > 150):
 		collision_shape_2d.disabled = true;
 		rolled = true;
-		if (!attacking):
-			look_at(target);
 		roll_cd.start()
 		rolling = true;
-		velocity = (target - position).normalized() * (ms + 500);
+		velocity = (target - position).normalized() * (ms + 700);
 		roll_duration.start();
 	else:
 		rolled = false;
-
+	
 func shoot() -> void:
 	emit_signal("attack");
-	look_at(enemy.position);
+	var local_target = get_local_mouse_position();
+	if (local_target.x <= 0):
+		sprite.flip_h = true;
+	else:
+		sprite.flip_h = false;
+	rotation_character.look_at(enemy.position);
 	var projectile = projectile_path.instantiate();
 	projectile.enemy_to_hit = enemy;
-	projectile.direction = rotation;
+	projectile.direction = rotation_character.rotation;
 	projectile.global_position = global_position;
-	projectile.global_rotation = global_rotation;
+	projectile.global_rotation = rotation_character.global_rotation;
 	get_parent().add_child(projectile);
 	attack_animation.start();
 	attack_speed_cd.start();
 	velocity = Vector2(0, 0);
 
-func move() -> void:
-	rolled = false;
-	target = get_global_mouse_position();
-	if (!attacking):
-		look_at(target);
+func move(target) -> void:
+	# Creates a target area to play "idle" when player enters that area
+	if (target_arr.size() > 0):
+		for t in target_arr:
+			if (t):
+				t.queue_free();
+	var target_area = target_path.instantiate() as Area2D;
+	get_parent().add_child(target_area);
+	target_area.global_position = target;
+	target_arr.append(target_area);
+	
 	velocity = (target - position).normalized() * ms;
+	rolled = false;
+	var local_target = get_local_mouse_position();
+	if (local_target.x <= 0):
+		sprite.flip_h = true;
+	else:
+		sprite.flip_h = false;
+	sprite.play("run");
 
 func _on_click_hitbox_mouse_entered(enemyNodePath : NodePath):
 	enemy = get_node(enemyNodePath);
@@ -115,7 +143,7 @@ func _on_click_hitbox_mouse_entered(enemyNodePath : NodePath):
 		enemy.get_child(0).texture = hovered_texture;
 		if (hovered_enemies.get(0)):
 			hovered_enemies.get(0).get_child(0).texture == normal_texture;
-		
+
 func _on_click_hitbox_mouse_exited():
 	hovering_enemy = false;
 	var prev_enemy = hovered_enemies.pop_at(0);
@@ -123,7 +151,8 @@ func _on_click_hitbox_mouse_exited():
 	if (hovered_enemies.size() == 2):
 		hovering_enemy = true;
 		var prev_prev_enemy = hovered_enemies.pop_at(0);
-		enemy.get_child(0).texture = hovered_texture;
+		if (enemy):
+			enemy.get_child(0).texture = hovered_texture;
 		if (prev_enemy):
 			prev_enemy.get_child(0).texture = normal_texture;
 		if (prev_prev_enemy):
@@ -131,33 +160,15 @@ func _on_click_hitbox_mouse_exited():
 	# hovered enemy though another enemy
 	if (hovered_enemies.size() == 1):
 		hovering_enemy = true;
-		enemy.get_child(0).texture = hovered_texture;
+		if (enemy):
+			enemy.get_child(0).texture = hovered_texture;
 		if (prev_enemy):
 			prev_enemy.get_child(0).texture = normal_texture;
 	else:
 		enemy.get_child(0).texture = normal_texture;
-	
-func get_enemy_to_hit() -> CharacterBody2D:
-	return enemy;
 	
 func _on_roll_duration_timeout() -> void:
 	rolling = false;
 	collision_shape_2d.disabled = false;
 	if (rolled):
 		velocity = (target - position).normalized() * ms;
-
-#func _on_enemy_mouse_entered(enemyNodePath : NodePath) -> void:
-	#enemy = get_node(enemyNodePath);
-	#hovering_enemy = true;
-	#var prevHoveredEnemy = hovered_stack.pop_front()
-	#if (prevHoveredEnemy == null):
-		#enemy.get_child(0).texture = hovered_texture;
-		#hovered_stack.push_front(enemy);	
-	#else:
-		#prevHoveredEnemy.get_child(0).texture = normal_texture;
-	#
-#func _on_enemy_mouse_exited() -> void:
-	#hovering_enemy = false;
-	#if (enemy):
-		#enemy.get_child(0).texture = normal_texture;
-		#hovered_stack.pop_front();

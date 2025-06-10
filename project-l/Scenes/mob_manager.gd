@@ -19,14 +19,14 @@ var viewport : Vector2;
 var distance_factor = 75;
 
 func _ready() -> void:
-	spawn_rate.wait_time = 5;
+	spawn_rate.wait_time = 2;
 
 func spawn(spawnPos) -> void:
 	enemy = Enemy.instantiate() as CharacterBody2D;
 	add_child(enemy);
 	enemy.global_position = spawnPos;
 	enemies.append(enemy);
-	var click_hitbox = enemy.get_child(5);
+	var click_hitbox = enemy.find_child("ClickHitbox");
 	click_hitbox.mouse_entered.connect(player._on_click_hitbox_mouse_entered.bind(enemy.get_path()));
 	click_hitbox.mouse_exited.connect(player._on_click_hitbox_mouse_exited);
 
