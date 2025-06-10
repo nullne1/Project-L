@@ -1,15 +1,22 @@
 extends CharacterBody2D
 
-@onready var hp := 100;
-@onready var player: CharacterBody2D = $"../../User/Player"
-@onready var enemy_health_bar: TextureProgressBar = $EnemyHealthBar
 const CHARGE_UP_ZOMBIE = preload("res://Assets/topdown_textures/charge_up_zombie.png")
 const ATTACK_ZOMBIE = preload("res://Assets/topdown_textures/attack_zombie.png")
+const SWORD_SLASH = preload("res://Scenes/sword_slash.tscn")
 
-var ms := 200;
+@onready var hp := 100;
+@onready var player: CharacterBody2D = $"../../User/Player"
+@onready var sprite: Sprite2D = $Sprite2D
+@onready var enemy_health_bar: TextureProgressBar = %EnemyHealthBar
+
+var ms := 225;
 var in_range := false;
 
+func _ready() -> void:
+	await get_tree().create_timer(2).timeout;
+
 func _physics_process(delta: float) -> void:
+	enemy_health_bar.rotation = 0;
 	enemy_health_bar.value = hp;
 	look_at(player.position);
 	if (!in_range):
@@ -21,6 +28,8 @@ func _physics_process(delta: float) -> void:
 
 func _on_attack_range_body_entered(body: Node2D) -> void:
 	if (body == player):
-		get_child(0).texture = CHARGE_UP_ZOMBIE;
+		sprite.texture = CHARGE_UP_ZOMBIE;
+		var attack = SWORD_SLASH.instantiate() as StaticBody2D;
+		add_child(attack);
 		in_range = true;
 		velocity = Vector2(0, 0);
