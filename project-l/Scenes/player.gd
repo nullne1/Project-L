@@ -47,7 +47,7 @@ func _physics_process(delta: float) -> void:
 	if (hovering_enemy && enemy && Input.is_action_just_pressed("attack") && attack_speed_cd.is_stopped()):
 		shoot();
 
-	if (Input.is_action_pressed("move") && (roll_duration.time_left < 0.1 || !rolling)):
+	if (Input.is_action_pressed("move") && (roll_duration.time_left < 0.1)):
 		target = get_global_mouse_position();
 		move(target);
 
@@ -81,17 +81,34 @@ func _physics_process(delta: float) -> void:
 func roll() -> void:
 	if (!roll_cd.is_stopped()):
 		return;
-	target = get_global_mouse_position();
-	print(position.angle_to(target))
+	# remove previous target area2Ds
+	if (target_arr.size() > 0):
+		for t in target_arr:
+			if (t):
+				t.queue_free();
+				
 	if (target.distance_to(position) > 150):
-		collision_shape_2d.disabled = true;
+		# creates a target area to play "idle" when player enters that area
+		target = get_global_mouse_position();
+		var target_area = target_path.instantiate() as Area2D;
+		get_parent().add_child(target_area);
+		target_area.global_position = target;
+		target_arr.append(target_area);
+		
 		rolled = true;
-		roll_cd.start()
 		rolling = true;
 		velocity = (target - position).normalized() * (ms + 700);
+		roll_cd.start()
 		roll_duration.start();
+		sprite.play("rolling");
 	else:
 		rolled = false;
+	# flip
+	var local_target = get_local_mouse_position();
+	if (local_target.x <= 0):
+		sprite.flip_h = true;
+	else:
+		sprite.flip_h = false;
 	
 func shoot() -> void:
 	emit_signal("attack");
@@ -112,7 +129,9 @@ func shoot() -> void:
 	velocity = Vector2(0, 0);
 
 func move(target) -> void:
-	# Creates a target area to play "idle" when player enters that area
+	if (rolling):
+		return;
+	# creates a target area to play "idle" when player enters that area
 	if (target_arr.size() > 0):
 		for t in target_arr:
 			if (t):
@@ -129,7 +148,7 @@ func move(target) -> void:
 		sprite.flip_h = true;
 	else:
 		sprite.flip_h = false;
-	sprite.play("run");
+	sprite.play("running");
 
 func _on_click_hitbox_mouse_entered(enemyNodePath : NodePath):
 	enemy = get_node(enemyNodePath);
@@ -165,10 +184,15 @@ func _on_click_hitbox_mouse_exited():
 		if (prev_enemy):
 			prev_enemy.get_child(0).texture = normal_texture;
 	else:
-		enemy.get_child(0).texture = normal_texture;
+		if (enemy):
+			enemy.get_child(0).texture = normal_texture;
 	
 func _on_roll_duration_timeout() -> void:
 	rolling = false;
 	collision_shape_2d.disabled = false;
-	if (rolled):
-		velocity = (target - position).normalized() * ms;
+	#if (rolled):
+		#velocity = (target - position).normalized() * ms;
+		
+func _on_animated_sprite_2d_animation_finished() -> void:
+	if (sprite && sprite.animation == "rolling" && rolled):
+		sprite.play("running");
