@@ -9,7 +9,7 @@ const SWORD_SLASH = preload("res://Scenes/sword_slash.tscn")
 @onready var sprite: Sprite2D = $Sprite2D
 @onready var enemy_health_bar: TextureProgressBar = %EnemyHealthBar
 
-var ms := 225;
+var ms := 200;
 var in_range := false;
 
 func _ready() -> void:
