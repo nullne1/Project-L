@@ -10,7 +10,7 @@ extends CharacterBody2D
 @onready var roll_cd: Timer = $RollCD
 @onready var roll_duration: Timer = $RollDuration
 @onready var collision_shape_2d: CollisionShape2D = $CollisionShape2D
-@onready var rotation_character: CharacterBody2D = $CharacterBody2D
+@onready var rotation_character: CharacterBody2D = $RotationCharacter
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 
 var hovered_texture = preload("res://Assets/topdown_textures/hovered_zombie.png");
@@ -29,17 +29,19 @@ var enemy: CharacterBody2D;
 var enemy_to_hit: CharacterBody2D;
 var hovered_enemies: Array = [];
 var on_roll_position: Vector2
-var rolled = false;
 var attack_speed: float = 1.0 / 2.5;
 var kinematic_collision: KinematicCollision2D;
 var target_arr = Array();
+var roll_target: Vector2;
+var roll_speed: float;
 
 signal attack;
 
 func _ready() -> void:
 	attack_speed_cd.wait_time = attack_speed;
-	roll_duration.wait_time = 0.2;
+	roll_duration.wait_time = 0.27;
 	roll_cd.wait_time = 1;
+	roll_speed = 12.5;
 	
 func _physics_process(delta: float) -> void:
 	attacking = !attack_animation.is_stopped();
@@ -47,9 +49,8 @@ func _physics_process(delta: float) -> void:
 	if (hovering_enemy && enemy && Input.is_action_just_pressed("attack") && attack_speed_cd.is_stopped()):
 		shoot();
 
-	if (Input.is_action_pressed("move") && (roll_duration.time_left < 0.1)):
-		target = get_global_mouse_position();
-		move(target);
+	if (Input.is_action_pressed("move") && (!rolling)):
+		move();
 
 	if (Input.is_action_just_pressed("roll")):
 		roll();
@@ -57,9 +58,12 @@ func _physics_process(delta: float) -> void:
 	if (position.distance_to(target) > 3 && !attacking):
 		kinematic_collision = move_and_collide(velocity * delta);
 		
-	if (velocity == Vector2(0, 0) || kinematic_collision && kinematic_collision.get_collider()):
+	# check for collision
+	if (kinematic_collision && kinematic_collision.get_collider()):
 		sprite.play("idle");
 	
+	if (rolling):
+		position += roll_target.normalized() * roll_speed;
 	# abilities
 	# enemy colliding
 	#for i in get_slide_collision_count():
@@ -81,42 +85,56 @@ func _physics_process(delta: float) -> void:
 func roll() -> void:
 	if (!roll_cd.is_stopped()):
 		return;
-	# remove previous target area2Ds
-	if (target_arr.size() > 0):
-		for t in target_arr:
-			if (t):
-				t.queue_free();
-				
-	if (target.distance_to(position) > 150):
-		# creates a target area to play "idle" when player enters that area
-		target = get_global_mouse_position();
-		var target_area = target_path.instantiate() as Area2D;
-		get_parent().add_child(target_area);
-		target_area.global_position = target;
-		target_arr.append(target_area);
-		
-		rolled = true;
-		rolling = true;
-		velocity = (target - position).normalized() * (ms + 700);
-		roll_cd.start()
-		roll_duration.start();
-		sprite.play("rolling");
+	rolling = true;
+	roll_cd.start()
+	roll_duration.start();
+	velocity = Vector2.ZERO;
+	roll_target = get_local_mouse_position();
+	
+	sprite.play("rolling");
+	#flip
+	var local_target = get_local_mouse_position();
+	if (local_target.x <= 0):
+		sprite.flip_h = true;
 	else:
-		rolled = false;
+		sprite.flip_h = false;
+		
+	# remove previous target area2Ds
+	#if (target_arr.size() > 0):
+		#for t in target_arr:
+			#if (t):
+				#t.queue_free();
+	#
+	#if (target.distance_to(position) > 150):
+		## creates a target area to play "idle" when player enters that area
+		#target = get_global_mouse_position();
+		#var target_area = target_path.instantiate() as Area2D;
+		#get_parent().add_child(target_area);
+		#target_area.global_position = target;
+		#target_arr.append(target_area);
+		#
+		#rolled = true;
+		#rolling = true;
+		#velocity = (target - position).normalized() * (ms + 700);
+		#roll_cd.start()
+		#roll_duration.start();
+		#sprite.play("rolling");
+	#else:
+		#rolled = false;
+	# flip
+	
+	
+func shoot() -> void:
+	emit_signal("attack");
+	# to be changed to shooting animation
+	sprite.play("draw_arrow");
 	# flip
 	var local_target = get_local_mouse_position();
 	if (local_target.x <= 0):
 		sprite.flip_h = true;
 	else:
 		sprite.flip_h = false;
-	
-func shoot() -> void:
-	emit_signal("attack");
-	var local_target = get_local_mouse_position();
-	if (local_target.x <= 0):
-		sprite.flip_h = true;
-	else:
-		sprite.flip_h = false;
+	# uses rotation character to set projectile's rotation
 	rotation_character.look_at(enemy.position);
 	var projectile = projectile_path.instantiate();
 	projectile.enemy_to_hit = enemy;
@@ -128,9 +146,7 @@ func shoot() -> void:
 	attack_speed_cd.start();
 	velocity = Vector2(0, 0);
 
-func move(target) -> void:
-	if (rolling):
-		return;
+func move() -> void:
 	# creates a target area to play "idle" when player enters that area
 	if (target_arr.size() > 0):
 		for t in target_arr:
@@ -141,14 +157,16 @@ func move(target) -> void:
 	target_area.global_position = target;
 	target_arr.append(target_area);
 	
+	target = get_global_mouse_position();
 	velocity = (target - position).normalized() * ms;
-	rolled = false;
+
+	sprite.play("running");
+	# flip
 	var local_target = get_local_mouse_position();
 	if (local_target.x <= 0):
 		sprite.flip_h = true;
 	else:
 		sprite.flip_h = false;
-	sprite.play("running");
 
 func _on_click_hitbox_mouse_entered(enemyNodePath : NodePath):
 	enemy = get_node(enemyNodePath);
@@ -189,10 +207,8 @@ func _on_click_hitbox_mouse_exited():
 	
 func _on_roll_duration_timeout() -> void:
 	rolling = false;
-	collision_shape_2d.disabled = false;
-	#if (rolled):
-		#velocity = (target - position).normalized() * ms;
-		
+	
 func _on_animated_sprite_2d_animation_finished() -> void:
-	if (sprite && sprite.animation == "rolling" && rolled):
-		sprite.play("running");
+	if (sprite.animation == "rolling"):
+		print("helo")
+		sprite.play("idle")
