@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://65qxk33uq1xb"
-path="res://.godot/imported/GandalfHardcore Archer sheet.png-ff98ae0d7850f423597124e5c4951fb1.ctex"
+uid="uid://bfffm76olkoj"
+path="res://.godot/imported/archer.png-e01b2199e6493383a69f6900b3b14746.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Archer/GandalfHardcore Archer sheet.png"
-dest_files=["res://.godot/imported/GandalfHardcore Archer sheet.png-ff98ae0d7850f423597124e5c4951fb1.ctex"]
+source_file="res://Assets/Archer/archer.png"
+dest_files=["res://.godot/imported/archer.png-e01b2199e6493383a69f6900b3b14746.ctex"]
 
 [params]
 
