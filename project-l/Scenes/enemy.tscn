@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://3j2nug1fn8r2"]
+[gd_scene load_steps=9 format=3 uid="uid://3j2nug1fn8r2"]
 
 [ext_resource type="Script" uid="uid://dtml85ip77sn6" path="res://Scenes/enemy.gd" id="1_1f0kj"]
 [ext_resource type="Texture2D" uid="uid://b800mxcr3l14d" path="res://Assets/topdown_textures/zombie.png" id="1_ymxaj"]
@@ -20,7 +20,21 @@ colors = PackedColorArray(1, 0, 0, 1, 1, 0, 0, 1)
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_1f0kj"]
 gradient = SubResource("Gradient_jjvhh")
 
+[sub_resource type="SpriteFrames" id="SpriteFrames_m4x7e"]
+animations = [{
+"frames": [],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"walking",
+"speed": 15.0
+}]
+
 [node name="Enemy" type="CharacterBody2D"]
+position = Vector2(69, 61)
 scale = Vector2(1.1, 1.1)
 input_pickable = true
 script = ExtResource("1_1f0kj")
@@ -69,5 +83,13 @@ grow_vertical = 0
 scale = Vector2(1.03839, 0.147484)
 value = 100.0
 texture_progress = SubResource("GradientTexture2D_1f0kj")
+metadata/_edit_use_anchors_ = true
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(6.36364, -40)
+scale = Vector2(2.2, 2.105)
+sprite_frames = SubResource("SpriteFrames_m4x7e")
+animation = &"idle"
+autoplay = "walking"
 
 [connection signal="body_entered" from="AttackRange" to="." method="_on_attack_range_body_entered"]
