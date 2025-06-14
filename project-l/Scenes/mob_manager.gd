@@ -12,8 +12,8 @@ var mouse_position: Vector2;
 var enemy_for_player: CharacterBody2D;
 var enemy_num := 0;
 var rng = RandomNumberGenerator.new();
-var x : int;
-var y : int;
+var x : float;
+var y : float;
 var pos : Vector2;
 var viewport : Vector2;
 var distance_factor = 75;
@@ -37,20 +37,20 @@ func _process(_delta: float) -> void:
 		match rng.randi_range(0, 3):
 			# left spawn
 			0:
-				x = rng.randi_range(pos.x - viewport.x / 2 - 50, pos.x - viewport.x / 2 - distance_factor);
-				y = rng.randi_range(pos.y - viewport.y / 2 - distance_factor, pos.y + viewport.y / 2 + distance_factor);
+				x = rng.randf_range(pos.x - viewport.x / 2 - 50, pos.x - viewport.x / 2 - distance_factor);
+				y = rng.randf_range(pos.y - viewport.y / 2 - distance_factor, pos.y + viewport.y / 2 + distance_factor);
 			# right spawn
 			1:
-				x = rng.randi_range(pos.x + viewport.x / 2 + distance_factor, pos.x + viewport.x / 2 + 50);
-				y = rng.randi_range(pos.y - viewport.y / 2 - distance_factor, pos.y + viewport.y / 2 + distance_factor);
+				x = rng.randf_range(pos.x + viewport.x / 2 + distance_factor, pos.x + viewport.x / 2 + 50);
+				y = rng.randf_range(pos.y - viewport.y / 2 - distance_factor, pos.y + viewport.y / 2 + distance_factor);
 			# upper spawn
 			2:
-				x = rng.randi_range(pos.x - viewport.x / 2, pos.x + viewport.x / 2);
-				y = rng.randi_range(pos.y + viewport.y / 2 + distance_factor, pos.y + viewport.y / 2 + 50);
+				x = rng.randf_range(pos.x - viewport.x / 2, pos.x + viewport.x / 2);
+				y = rng.randf_range(pos.y + viewport.y / 2 + distance_factor, pos.y + viewport.y / 2 + 50);
 			# lower spawn
 			3:
-				x = rng.randi_range(pos.x - viewport.x / 2, pos.x + viewport.x / 2);
-				y = rng.randi_range(pos.y - viewport.y / 2 - distance_factor, pos.y - viewport.y / 2 - 50);
+				x = rng.randf_range(pos.x - viewport.x / 2, pos.x + viewport.x / 2);
+				y = rng.randf_range(pos.y - viewport.y / 2 - distance_factor, pos.y - viewport.y / 2 - 50);
 		spawn(Vector2(x, y));
 		spawn_rate.start();
 	

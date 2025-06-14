@@ -35,6 +35,7 @@ var roll_target: Vector2;
 var roll_speed: float;
 var last_direction: String;
 var cancelled: bool;
+var changed_target: bool;
 
 signal attack;
 
@@ -45,8 +46,9 @@ func _ready() -> void:
 	roll_speed = 12.5;
 	
 func _physics_process(delta: float) -> void:
+	print(target_arr)
 	attacking = !attack_animation.is_stopped();
-	if (hovering_enemy && enemy && Input.is_action_just_pressed("attack") && attack_speed_cd.is_stopped()):
+	if (hovering_enemy && enemy && Input.is_action_pressed("attack") && attack_speed_cd.is_stopped()):
 		draw();
 
 	if (Input.is_action_pressed("move") && (!rolling)):
@@ -54,7 +56,7 @@ func _physics_process(delta: float) -> void:
 			cancelled = true;
 		move();
 
-	if (Input.is_action_just_pressed("roll")):
+	if (Input.is_action_pressed("roll")):
 		if (attacking):
 			cancelled = true;
 		roll();
@@ -86,8 +88,8 @@ func _physics_process(delta: float) -> void:
 			if (en):
 				en.find_child("Sprite2D").texture = normal_texture;
 
-func play_direction(target, animation) -> void:
-	var angle := rad_to_deg(position.angle_to_point(target));
+func play_direction(direction_target, animation) -> void:
+	var angle := rad_to_deg(position.angle_to_point(direction_target));
 	# up
 	if (angle > -120 && angle < -60):
 		sprite.play(animation + "_u");
@@ -104,12 +106,11 @@ func play_direction(target, animation) -> void:
 	elif (angle < 60 && angle > 0 || angle < 0 && angle > -60):
 		sprite.play(animation + "_r");
 		last_direction = "_r"
-	
 		
-
 func roll() -> void:
 	if (!roll_cd.is_stopped()):
 		return;
+	target_arr.clear()
 	rolling = true;
 	roll_cd.start()
 	roll_duration.start();
@@ -117,35 +118,11 @@ func roll() -> void:
 	roll_target = get_local_mouse_position();
 	target = get_global_mouse_position()
 	play_direction(target, "dodge");
-	#sprite.play("rolling");
-	#flip
-		
-	# remove previous target area2Ds
-	#if (target_arr.size() > 0):
-		#for t in target_arr:
-			#if (t):
-				#t.queue_free();
-	#
-	#if (target.distance_to(position) > 150):
-		# creates a target area to play "idle" when player enters that area
-		#target = get_global_mouse_position();
-		#var target_area = target_path.instantiate() as Area2D;
-		#get_parent().add_child(target_area);
-		#target_area.global_position = target;
-		#target_arr.append(target_area);
-		#
-		#rolled = true;
-		#rolling = true;
-		#velocity = (target - position).normalized() * (ms + 700);
-		#roll_cd.start()
-		#roll_duration.start();
-		#sprite.play("rolling");
-	#else:
-		#rolled = false;
-	# flip
-	
 	
 func draw() -> void:
+	if (changed_target):
+		cancelled = true;
+		return;
 	cancelled = false;
 	emit_signal("attack");
 	play_direction(enemy.position, "draw");
@@ -158,20 +135,23 @@ func draw() -> void:
 func move() -> void:
 	# creates a target area to play "idle" when player enters that area
 	if (target_arr.size() > 0):
-		for t in target_arr:
+		for n in range(target_arr.size()):
+			var t = target_arr.pop_at(n);
 			if (t):
 				t.queue_free();
+	
+	target = get_global_mouse_position();		
 	var target_area = target_path.instantiate() as Area2D;
 	get_parent().add_child(target_area);
 	target_area.global_position = target;
 	target_arr.append(target_area);
 	
-	target = get_global_mouse_position();
 	velocity = (target - position).normalized() * ms;
 	
 	play_direction(target, "run");
 
 func _on_click_hitbox_mouse_entered(enemyNodePath : NodePath):
+	changed_target = false;
 	enemy = get_node(enemyNodePath);
 	hovering_enemy = true;
 	hovered_enemies.append(enemy);
@@ -185,6 +165,7 @@ func _on_click_hitbox_mouse_entered(enemyNodePath : NodePath):
 			hovered_enemies.get(0).get_child(0).texture == normal_texture;
 
 func _on_click_hitbox_mouse_exited():
+	changed_target = true;
 	hovering_enemy = false;
 	var prev_enemy = hovered_enemies.pop_at(0);
 	# hovered enemy through 2 other enemies
@@ -215,19 +196,13 @@ func _on_archer_animation_finished() -> void:
 	if (sprite.animation == "dodge" + "_u" || sprite.animation == "dodge" + "_l" || sprite.animation == "dodge" + "_d" || sprite.animation == "dodge" + "_r"): 
 		sprite.play("idle" + last_direction);
 
-#var local_target = get_local_mouse_position();
-	#if (local_target.x <= 0):
-		#sprite.flip_h = true;
-	#else:
-		#sprite.flip_h = false;
-
-
 func _on_attack_animation_timeout() -> void:
 	if (cancelled):
 		attack_speed_cd.stop();
 		return;
 	var projectile = projectile_path.instantiate();
-	projectile.enemy_to_hit = enemy;
+	if (enemy):
+		projectile.enemy_to_hit = enemy;
 	projectile.direction = rotation_character.rotation;
 	projectile.global_position = global_position;
 	projectile.global_rotation = rotation_character.global_rotation;
