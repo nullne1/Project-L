@@ -9,8 +9,8 @@ radius = 20.5
 height = 50.9091
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_afpow"]
-radius = 26.2645
-height = 443.808
+radius = 27.9279
+height = 610.236
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_1f0kj"]
 radius = 48.1904
@@ -167,6 +167,11 @@ region = Rect2(512, 512, 64, 64)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_m4x7e"]
 animations = [{
+"frames": [],
+"loop": true,
+"name": &"new_animation",
+"speed": 5.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_afpow")
@@ -197,7 +202,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"walk_d",
-"speed": 5.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -229,7 +234,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"walk_l",
-"speed": 5.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -261,7 +266,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"walk_r",
-"speed": 5.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -293,7 +298,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"walk_u",
-"speed": 15.0
+"speed": 8.0
 }]
 
 [node name="Enemy" type="CharacterBody2D"]
@@ -310,10 +315,6 @@ texture = ExtResource("1_ymxaj")
 position = Vector2(-0.5, 0)
 shape = SubResource("CapsuleShape2D_1f0kj")
 debug_color = Color(3.17663e-06, 0.585575, 0.776292, 0.42)
-
-[node name="SubViewport" type="SubViewport" parent="."]
-
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="ClickHitbox" type="Area2D" parent="."]
 position = Vector2(-32, -64)
@@ -337,10 +338,9 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -32.0
+offset_left = -33.0
 offset_top = -64.0
-offset_right = 32.0
-offset_bottom = -2.28882e-05
+offset_right = 31.0
 grow_horizontal = 2
 grow_vertical = 0
 scale = Vector2(1.03839, 0.147484)
@@ -349,10 +349,11 @@ texture_progress = SubResource("GradientTexture2D_1f0kj")
 metadata/_edit_use_anchors_ = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(-3.12112e-06, -6.93582e-07)
+position = Vector2(-3.12112e-06, -11)
 scale = Vector2(1.9, 1.819)
 sprite_frames = SubResource("SpriteFrames_m4x7e")
-animation = &"walk_d"
+animation = &"walk_u"
 autoplay = "walk_u"
+frame_progress = 0.659603
 
 [connection signal="body_entered" from="AttackRange" to="." method="_on_attack_range_body_entered"]
