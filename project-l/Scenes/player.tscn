@@ -535,7 +535,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"draw_d",
-"speed": 30.0
+"speed": 120.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -576,7 +576,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"draw_l",
-"speed": 30.0
+"speed": 120.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -617,7 +617,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"draw_r",
-"speed": 30.0
+"speed": 120.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -661,7 +661,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"draw_u",
-"speed": 30.0
+"speed": 120.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -839,14 +839,13 @@ shape = SubResource("CircleShape2D_fkybt")
 position = Vector2(0.200001, -0.0999985)
 scale = Vector2(0.33, 0.33)
 sprite_frames = SubResource("SpriteFrames_dxncu")
-animation = &"dodge_r"
+animation = &"draw_d"
 autoplay = "idle_r"
 
 [node name="RotationCharacter" type="CharacterBody2D" parent="."]
 visible = false
 
 [node name="AttackAnimation" type="Timer" parent="."]
-wait_time = 0.15
 one_shot = true
 
 [node name="AttackSpeedCD" type="Timer" parent="."]

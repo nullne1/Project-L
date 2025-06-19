@@ -592,7 +592,6 @@ grow_vertical = 0
 scale = Vector2(2.92, 0.519998)
 value = 100.0
 texture_progress = SubResource("GradientTexture2D_kry3j")
-metadata/_edit_use_anchors_ = true
 
 [node name="User" type="Node2D" parent="."]
 

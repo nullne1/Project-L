@@ -20,6 +20,8 @@ var target_path = preload("res://Scenes/target.tscn");
 
 var health := 100;
 var ms := 300;
+var attacks_per_second: float;
+var attack_speed: float;
 var target := position;
 var hovering_enemy: bool;
 var attacking: bool;
@@ -28,7 +30,6 @@ var doing_action: bool;
 var enemy: CharacterBody2D;
 var enemy_to_hit: CharacterBody2D;
 var hovered_enemies: Array = [];
-var attack_speed: float = 1.0 / 2.5;
 var kinematic_collision: KinematicCollision2D;
 var target_arr = Array();
 var roll_target: Vector2;
@@ -36,20 +37,29 @@ var roll_speed: float;
 var last_direction: String;
 var cancelled: bool;
 var changed_target: bool;
+var projectile: CharacterBody2D;
 
 signal attack;
 
 func _ready() -> void:
+	# Sets animation, attack speed cooldown, and animation frames based on attacks per second
+	attacks_per_second = 2.5;
+	attack_speed = 1.0 / attacks_per_second;
+	attack_animation.wait_time = attack_speed / 2.5;
 	attack_speed_cd.wait_time = attack_speed;
+	sprite.sprite_frames.set_animation_speed("draw_u", attacks_per_second * 14);
+	sprite.sprite_frames.set_animation_speed("draw_l", attacks_per_second * 14);
+	sprite.sprite_frames.set_animation_speed("draw_d", attacks_per_second * 14);
+	sprite.sprite_frames.set_animation_speed("draw_r", attacks_per_second * 14);
+	
 	roll_duration.wait_time = 0.27;
 	roll_cd.wait_time = 1;
 	roll_speed = 12.5;
 	
 func _physics_process(delta: float) -> void:
-	print(target_arr)
 	attacking = !attack_animation.is_stopped();
 	if (hovering_enemy && enemy && Input.is_action_pressed("attack") && attack_speed_cd.is_stopped()):
-		draw();
+		draw_bow();
 
 	if (Input.is_action_pressed("move") && (!rolling)):
 		if (attacking):
@@ -108,8 +118,9 @@ func play_direction(direction_target, animation) -> void:
 		last_direction = "_r"
 		
 func roll() -> void:
-	if (!roll_cd.is_stopped()):
-		return;
+	if (!roll_cd.is_stopped()): return;
+	if (target_arr.size() > 0 && target_arr.get(0)): target_arr.get(0).queue_free();
+	
 	target_arr.clear()
 	rolling = true;
 	roll_cd.start()
@@ -119,10 +130,10 @@ func roll() -> void:
 	target = get_global_mouse_position()
 	play_direction(target, "dodge");
 	
-func draw() -> void:
-	if (changed_target):
-		cancelled = true;
-		return;
+func draw_bow() -> void:
+	if (target_arr.size() > 0 && target_arr.get(0)): target_arr.get(0).queue_free();
+	projectile = projectile_path.instantiate();
+	projectile.enemy_to_hit = enemy;
 	cancelled = false;
 	emit_signal("attack");
 	play_direction(enemy.position, "draw");
@@ -151,7 +162,6 @@ func move() -> void:
 	play_direction(target, "run");
 
 func _on_click_hitbox_mouse_entered(enemyNodePath : NodePath):
-	changed_target = false;
 	enemy = get_node(enemyNodePath);
 	hovering_enemy = true;
 	hovered_enemies.append(enemy);
@@ -165,7 +175,6 @@ func _on_click_hitbox_mouse_entered(enemyNodePath : NodePath):
 			hovered_enemies.get(0).get_child(0).texture == normal_texture;
 
 func _on_click_hitbox_mouse_exited():
-	changed_target = true;
 	hovering_enemy = false;
 	var prev_enemy = hovered_enemies.pop_at(0);
 	# hovered enemy through 2 other enemies
@@ -193,17 +202,17 @@ func _on_roll_duration_timeout() -> void:
 	rolling = false;
 	
 func _on_archer_animation_finished() -> void:
+	# plays idle animation in the direction of the last animation
 	if (sprite.animation == "dodge" + "_u" || sprite.animation == "dodge" + "_l" || sprite.animation == "dodge" + "_d" || sprite.animation == "dodge" + "_r"): 
 		sprite.play("idle" + last_direction);
 
 func _on_attack_animation_timeout() -> void:
+	# attack can be cancelled by inputting another action
 	if (cancelled):
 		attack_speed_cd.stop();
-		return;
-	var projectile = projectile_path.instantiate();
-	if (enemy):
-		projectile.enemy_to_hit = enemy;
-	projectile.direction = rotation_character.rotation;
-	projectile.global_position = global_position;
-	projectile.global_rotation = rotation_character.global_rotation;
-	get_parent().add_child(projectile);
+	# creates projectile after animation finishes and if not cancelled
+	elif (projectile):
+		projectile.direction = rotation_character.rotation;
+		projectile.global_position = global_position;
+		projectile.global_rotation = rotation_character.global_rotation;
+		get_parent().add_child(projectile);

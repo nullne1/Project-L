@@ -10,7 +10,8 @@ const SWORD_SLASH = preload("res://Scenes/sword_slash.tscn")
 @onready var enemy_health_bar: TextureProgressBar = %EnemyHealthBar
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 
-var ms := 200;
+#var ms := 200;
+var ms := 150;
 var in_range := false;
 var last_direction: String;
 
