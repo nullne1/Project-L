@@ -1,10 +1,31 @@
-[gd_scene load_steps=110 format=3 uid="uid://be281pixkehmv"]
+[gd_scene load_steps=117 format=3 uid="uid://be281pixkehmv"]
 
 [ext_resource type="Script" uid="uid://c5ckqxptboifi" path="res://Scenes/player.gd" id="1_onrkg"]
 [ext_resource type="Texture2D" uid="uid://bfffm76olkoj" path="res://Assets/Archer/archer.png" id="6_x3wgy"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_fkybt"]
-radius = 0.4
+[sub_resource type="AtlasTexture" id="AtlasTexture_cvnsp"]
+atlas = ExtResource("6_x3wgy")
+region = Rect2(0, 1280, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6t5aa"]
+atlas = ExtResource("6_x3wgy")
+region = Rect2(64, 1280, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vgqql"]
+atlas = ExtResource("6_x3wgy")
+region = Rect2(128, 1280, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fkybt"]
+atlas = ExtResource("6_x3wgy")
+region = Rect2(192, 1280, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x3wgy"]
+atlas = ExtResource("6_x3wgy")
+region = Rect2(256, 1280, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3smsa"]
+atlas = ExtResource("6_x3wgy")
+region = Rect2(320, 1280, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ketbw"]
 atlas = ExtResource("6_x3wgy")
@@ -430,6 +451,29 @@ region = Rect2(448, 2432, 64, 64)
 animations = [{
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_cvnsp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6t5aa")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vgqql")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fkybt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x3wgy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3smsa")
+}],
+"loop": false,
+"name": &"death",
+"speed": 20.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_ketbw")
 }, {
 "duration": 1.0,
@@ -824,6 +868,13 @@ animations = [{
 "speed": 10.0
 }]
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_fkybt"]
+radius = 0.4
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_cvnsp"]
+radius = 3.55
+height = 14.6
+
 [node name="Player" type="CharacterBody2D"]
 position = Vector2(302, 182)
 scale = Vector2(10, 10)
@@ -831,16 +882,14 @@ script = ExtResource("1_onrkg")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(-1.2964e-06, 0)
-shape = SubResource("CircleShape2D_fkybt")
-
 [node name="Archer" type="AnimatedSprite2D" parent="."]
-position = Vector2(0.200001, -0.0999985)
+position = Vector2(1.01328e-06, -2.98023e-08)
 scale = Vector2(0.33, 0.33)
 sprite_frames = SubResource("SpriteFrames_dxncu")
-animation = &"draw_d"
+animation = &"death"
 autoplay = "idle_r"
+frame = 5
+frame_progress = 1.0
 
 [node name="RotationCharacter" type="CharacterBody2D" parent="."]
 visible = false
@@ -861,6 +910,15 @@ one_shot = true
 [node name="RollDuration" type="Timer" parent="."]
 wait_time = 0.2
 one_shot = true
+
+[node name="IdleArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="IdleArea"]
+shape = SubResource("CircleShape2D_fkybt")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0.0499992, 2.2)
+shape = SubResource("CapsuleShape2D_cvnsp")
 
 [connection signal="animation_finished" from="Archer" to="." method="_on_archer_animation_finished"]
 [connection signal="timeout" from="AttackAnimation" to="." method="_on_attack_animation_timeout"]
