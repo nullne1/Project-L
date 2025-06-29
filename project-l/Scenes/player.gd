@@ -1,5 +1,4 @@
 extends CharacterBody2D
-
 @onready var mob_manager: Node2D = %MobManager
 @onready var player_health_bar: TextureProgressBar = %PlayerHealthBar
 
@@ -13,10 +12,8 @@ extends CharacterBody2D
 @onready var rotation_character: CharacterBody2D = $RotationCharacter
 @onready var sprite: AnimatedSprite2D = $Archer
 
-var hovered_texture = preload("res://Assets/topdown_textures/hovered_zombie.png");
-var normal_texture = preload("res://Assets/topdown_textures/zombie.png");
-var projectile_path = preload("res://Scenes/arrow.tscn");
-var target_path = preload("res://Scenes/target.tscn");
+var ARROW_PATH = preload("res://Scenes/arrow.tscn");
+var TARGET_PATH = preload("res://Scenes/target.tscn");
 
 var health := 100;
 var ms := 300;
@@ -37,9 +34,7 @@ var roll_speed: float;
 var last_direction: String;
 var cancelled: bool;
 var changed_target: bool;
-var projectile: CharacterBody2D;
-
-signal attack;
+var arrow: CharacterBody2D;
 
 func _ready() -> void:
 	# Sets animation, attack speed cooldown, and animation frames based on attacks per second
@@ -91,28 +86,24 @@ func _physics_process(delta: float) -> void:
 			#i_time.start()
 	# death
 	if (health <= 0):
-		queue_free()
+		sprite.play("death");
 	
-	if (hovered_enemies.size() > 2):
-		for en in hovered_enemies:
-			if (en):
-				en.find_child("Sprite2D").texture = normal_texture;
+	#if (hovered_enemies.size() > 2):
+		#for en in hovered_enemies:
+			#if (en):
+				#en.find_child("Sprite2D").texture = normal_texture;
 
-func play_direction(direction_target, animation) -> void:
+func play_direction(direction_target: Vector2, animation: String) -> void:
 	var angle := rad_to_deg(position.angle_to_point(direction_target));
-	# up
 	if (angle > -120 && angle < -60):
 		sprite.play(animation + "_u");
 		last_direction = "_u"
-	# left
 	elif (angle < -120 && angle > -180 || angle < 180 && angle > 120):
 		sprite.play(animation + "_l");
 		last_direction = "_l"
-	# down
 	elif (angle < 120 && angle > 60):
 		sprite.play(animation + "_d");
 		last_direction = "_d"
-	# right
 	elif (angle < 60 && angle > 0 || angle < 0 && angle > -60):
 		sprite.play(animation + "_r");
 		last_direction = "_r"
@@ -120,7 +111,7 @@ func play_direction(direction_target, animation) -> void:
 func roll() -> void:
 	if (!roll_cd.is_stopped()): return;
 	if (target_arr.size() > 0 && target_arr.get(0)): target_arr.get(0).queue_free();
-	
+	collision_shape_2d.disabled = true;
 	target_arr.clear()
 	rolling = true;
 	roll_cd.start()
@@ -132,13 +123,8 @@ func roll() -> void:
 	
 func draw_bow() -> void:
 	if (target_arr.size() > 0 && target_arr.get(0)): target_arr.get(0).queue_free();
-	projectile = projectile_path.instantiate();
-	projectile.enemy_to_hit = enemy;
 	cancelled = false;
-	emit_signal("attack");
 	play_direction(enemy.position, "draw");
-	# uses rotation character to set projectile's rotation
-	rotation_character.look_at(enemy.position);
 	attack_animation.start();
 	attack_speed_cd.start();
 	velocity = Vector2(0, 0);
@@ -151,8 +137,8 @@ func move() -> void:
 			if (t):
 				t.queue_free();
 	
-	target = get_global_mouse_position();		
-	var target_area = target_path.instantiate() as Area2D;
+	target = get_global_mouse_position();
+	var target_area = TARGET_PATH.instantiate() as Area2D;
 	get_parent().add_child(target_area);
 	target_area.global_position = target;
 	target_arr.append(target_area);
@@ -164,55 +150,62 @@ func move() -> void:
 func _on_click_hitbox_mouse_entered(enemyNodePath : NodePath):
 	enemy = get_node(enemyNodePath);
 	hovering_enemy = true;
-	hovered_enemies.append(enemy);
-	# normal case where you hover and unhover
-	if (hovered_enemies.size() == 1):
-		enemy.get_child(0).texture = hovered_texture;
-	# case where user mouse enters enemy through another enemy
-	elif (hovered_enemies.size() == 2):
-		enemy.get_child(0).texture = hovered_texture;
-		if (hovered_enemies.get(0)):
-			hovered_enemies.get(0).get_child(0).texture == normal_texture;
+	#hovered_enemies.append(enemy);
+	## normal case where you hover and unhover
+	#if (hovered_enemies.size() == 1):
+		#enemy.get_child(0).texture = hovered_texture;
+	## case where user mouse enters enemy through another enemy
+	#elif (hovered_enemies.size() == 2):
+		#enemy.get_child(0).texture = hovered_texture;
+		#if (hovered_enemies.get(0)):
+			#hovered_enemies.get(0).get_child(0).texture == normal_texture;
 
 func _on_click_hitbox_mouse_exited():
 	hovering_enemy = false;
-	var prev_enemy = hovered_enemies.pop_at(0);
-	# hovered enemy through 2 other enemies
-	if (hovered_enemies.size() == 2):
-		hovering_enemy = true;
-		var prev_prev_enemy = hovered_enemies.pop_at(0);
-		if (enemy):
-			enemy.get_child(0).texture = hovered_texture;
-		if (prev_enemy):
-			prev_enemy.get_child(0).texture = normal_texture;
-		if (prev_prev_enemy):
-			prev_prev_enemy.get_child(0).texture = normal_texture;
-	# hovered enemy though another enemy
-	if (hovered_enemies.size() == 1):
-		hovering_enemy = true;
-		if (enemy):
-			enemy.get_child(0).texture = hovered_texture;
-		if (prev_enemy):
-			prev_enemy.get_child(0).texture = normal_texture;
-	else:
-		if (enemy):
-			enemy.get_child(0).texture = normal_texture;
+	#var prev_enemy = hovered_enemies.pop_at(0);
+	## hovered enemy through 2 other enemies
+	#if (hovered_enemies.size() == 2):
+		#hovering_enemy = true;
+		#var prev_prev_enemy = hovered_enemies.pop_at(0);
+		#if (enemy):
+			#enemy.get_child(0).texture = hovered_texture;
+		#if (prev_enemy):
+			#prev_enemy.get_child(0).texture = normal_texture;
+		#if (prev_prev_enemy):
+			#prev_prev_enemy.get_child(0).texture = normal_texture;
+	## hovered enemy though another enemy
+	#if (hovered_enemies.size() == 1):
+		#hovering_enemy = true;
+		#if (enemy):
+			#enemy.get_child(0).texture = hovered_texture;
+		#if (prev_enemy):
+			#prev_enemy.get_child(0).texture = normal_texture;
+	#else:
+		#if (enemy):
+			#enemy.get_child(0).texture = normal_texture;
 	
 func _on_roll_duration_timeout() -> void:
+	collision_shape_2d.disabled = false;
 	rolling = false;
 	
 func _on_archer_animation_finished() -> void:
 	# plays idle animation in the direction of the last animation
-	if (sprite.animation == "dodge" + "_u" || sprite.animation == "dodge" + "_l" || sprite.animation == "dodge" + "_d" || sprite.animation == "dodge" + "_r"): 
-		sprite.play("idle" + last_direction);
+	if (sprite.animation == "dodge" + "_u" 
+	|| sprite.animation == "dodge" + "_l" 
+	|| sprite.animation == "dodge" + "_d" 
+	|| sprite.animation == "dodge" + "_r"): sprite.play("idle" + last_direction);
+	elif (sprite.animation == "death"):
+		get_tree().paused = true;
 
 func _on_attack_animation_timeout() -> void:
 	# attack can be cancelled by inputting another action
-	if (cancelled):
-		attack_speed_cd.stop();
+	if (cancelled): attack_speed_cd.stop();
 	# creates projectile after animation finishes and if not cancelled
-	elif (projectile):
-		projectile.direction = rotation_character.rotation;
-		projectile.global_position = global_position;
-		projectile.global_rotation = rotation_character.global_rotation;
-		get_parent().add_child(projectile);
+	else:
+		arrow = ARROW_PATH.instantiate();
+		arrow.enemy_to_hit = enemy;
+		rotation_character.look_at(enemy.position);
+		arrow.direction = rotation_character.rotation;
+		arrow.global_position = global_position;
+		arrow.global_rotation = rotation_character.global_rotation;
+		get_parent().add_child(arrow);
