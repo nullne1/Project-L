@@ -1,4 +1,4 @@
-[gd_scene load_steps=117 format=3 uid="uid://be281pixkehmv"]
+[gd_scene load_steps=112 format=3 uid="uid://be281pixkehmv"]
 
 [ext_resource type="Script" uid="uid://c5ckqxptboifi" path="res://Scenes/player.gd" id="1_onrkg"]
 [ext_resource type="Texture2D" uid="uid://bfffm76olkoj" path="res://Assets/Archer/archer.png" id="6_x3wgy"]
@@ -135,10 +135,6 @@ region = Rect2(576, 1152, 64, 64)
 atlas = ExtResource("6_x3wgy")
 region = Rect2(640, 1152, 64, 64)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_hl8o5"]
-atlas = ExtResource("6_x3wgy")
-region = Rect2(768, 1152, 64, 64)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_v8gx6"]
 atlas = ExtResource("6_x3wgy")
 region = Rect2(0, 1088, 64, 64)
@@ -182,10 +178,6 @@ region = Rect2(576, 1088, 64, 64)
 [sub_resource type="AtlasTexture" id="AtlasTexture_0cppb"]
 atlas = ExtResource("6_x3wgy")
 region = Rect2(640, 1088, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_jr4hp"]
-atlas = ExtResource("6_x3wgy")
-region = Rect2(768, 1088, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8h4oy"]
 atlas = ExtResource("6_x3wgy")
@@ -231,10 +223,6 @@ region = Rect2(576, 1216, 64, 64)
 atlas = ExtResource("6_x3wgy")
 region = Rect2(640, 1216, 64, 64)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_cq7w1"]
-atlas = ExtResource("6_x3wgy")
-region = Rect2(768, 1216, 64, 64)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_ho16k"]
 atlas = ExtResource("6_x3wgy")
 region = Rect2(0, 1024, 64, 64)
@@ -278,14 +266,6 @@ region = Rect2(576, 1024, 64, 64)
 [sub_resource type="AtlasTexture" id="AtlasTexture_a1mwt"]
 atlas = ExtResource("6_x3wgy")
 region = Rect2(640, 1024, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_7rvty"]
-atlas = ExtResource("6_x3wgy")
-region = Rect2(704, 1024, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_npbv3"]
-atlas = ExtResource("6_x3wgy")
-region = Rect2(768, 1024, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ax3m3"]
 atlas = ExtResource("6_x3wgy")
@@ -573,9 +553,6 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_78kn1")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_hl8o5")
 }],
 "loop": false,
 "name": &"draw_d",
@@ -614,9 +591,6 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_0cppb")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_jr4hp")
 }],
 "loop": false,
 "name": &"draw_l",
@@ -655,9 +629,6 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ihrpn")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_cq7w1")
 }],
 "loop": false,
 "name": &"draw_r",
@@ -696,12 +667,6 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_a1mwt")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_7rvty")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_npbv3")
 }],
 "loop": false,
 "name": &"draw_u",
@@ -716,7 +681,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"idle_d",
-"speed": 3.0
+"speed": 1.5
 }, {
 "frames": [{
 "duration": 1.0,
@@ -727,7 +692,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"idle_l",
-"speed": 3.0
+"speed": 1.5
 }, {
 "frames": [{
 "duration": 1.0,
@@ -738,7 +703,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"idle_r",
-"speed": 3.0
+"speed": 1.5
 }, {
 "frames": [{
 "duration": 1.0,
@@ -749,7 +714,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"idle_u",
-"speed": 3.0
+"speed": 1.5
 }, {
 "frames": [{
 "duration": 1.0,
@@ -872,24 +837,21 @@ animations = [{
 radius = 0.4
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_cvnsp"]
-radius = 3.55
-height = 14.6
+radius = 2.0
+height = 4.0
 
 [node name="Player" type="CharacterBody2D"]
-position = Vector2(302, 182)
-scale = Vector2(10, 10)
 script = ExtResource("1_onrkg")
 
 [node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(2, 2)
 
 [node name="Archer" type="AnimatedSprite2D" parent="."]
 position = Vector2(1.01328e-06, -2.98023e-08)
-scale = Vector2(0.33, 0.33)
+scale = Vector2(0.17, 0.17)
 sprite_frames = SubResource("SpriteFrames_dxncu")
-animation = &"death"
-autoplay = "idle_r"
-frame = 5
-frame_progress = 1.0
+animation = &"draw_u"
+autoplay = "idle_d"
 
 [node name="RotationCharacter" type="CharacterBody2D" parent="."]
 visible = false
@@ -917,9 +879,10 @@ one_shot = true
 shape = SubResource("CircleShape2D_fkybt")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0.0499992, 2.2)
+position = Vector2(1.14068e-05, 3)
 shape = SubResource("CapsuleShape2D_cvnsp")
 
 [connection signal="animation_finished" from="Archer" to="." method="_on_archer_animation_finished"]
+[connection signal="frame_changed" from="Archer" to="." method="_on_archer_frame_changed"]
 [connection signal="timeout" from="AttackAnimation" to="." method="_on_attack_animation_timeout"]
 [connection signal="timeout" from="RollDuration" to="." method="_on_roll_duration_timeout"]

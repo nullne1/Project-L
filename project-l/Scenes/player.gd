@@ -1,6 +1,7 @@
 extends CharacterBody2D
 @onready var mob_manager: Node2D = %MobManager
 @onready var player_health_bar: TextureProgressBar = %PlayerHealthBar
+@onready var dodge_icon: TextureProgressBar = %DodgeIcon
 
 @onready var attack_speed_cd: Timer = $AttackSpeedCD
 @onready var attack_animation: Timer = $AttackAnimation
@@ -12,11 +13,13 @@ extends CharacterBody2D
 @onready var rotation_character: CharacterBody2D = $RotationCharacter
 @onready var sprite: AnimatedSprite2D = $Archer
 
-var ARROW_PATH = preload("res://Scenes/arrow.tscn");
-var TARGET_PATH = preload("res://Scenes/target.tscn");
+const ARROW_PATH = preload("res://Scenes/arrow.tscn");
+const TARGET_PATH = preload("res://Scenes/target.tscn");
+const hover_cursor = preload("res://Assets/UI/StoneCursorWenrexa/PNG/05.png");
+const normal_cursor = preload("res://Assets/UI/StoneCursorWenrexa/PNG/01.png");
 
 var health := 100;
-var ms := 300;
+var ms := 175;
 var attacks_per_second: float;
 var attack_speed: float;
 var target := position;
@@ -38,25 +41,26 @@ var arrow: CharacterBody2D;
 
 func _ready() -> void:
 	# Sets animation, attack speed cooldown, and animation frames based on attacks per second
-	attacks_per_second = 2.5;
+	attacks_per_second = 4;
 	attack_speed = 1.0 / attacks_per_second;
 	attack_animation.wait_time = attack_speed / 2.5;
 	attack_speed_cd.wait_time = attack_speed;
-	sprite.sprite_frames.set_animation_speed("draw_u", attacks_per_second * 14);
-	sprite.sprite_frames.set_animation_speed("draw_l", attacks_per_second * 14);
-	sprite.sprite_frames.set_animation_speed("draw_d", attacks_per_second * 14);
-	sprite.sprite_frames.set_animation_speed("draw_r", attacks_per_second * 14);
+	sprite.sprite_frames.set_animation_speed("draw_u", attacks_per_second * 22);
+	sprite.sprite_frames.set_animation_speed("draw_l", attacks_per_second * 22);
+	sprite.sprite_frames.set_animation_speed("draw_d", attacks_per_second * 22);
+	sprite.sprite_frames.set_animation_speed("draw_r", attacks_per_second * 22);
 	
-	roll_duration.wait_time = 0.27;
+	roll_duration.wait_time = ms / 1000 + 0.25;
 	roll_cd.wait_time = 1;
-	roll_speed = 12.5;
+	roll_speed = ms / 24;
+	dodge_icon.max_value = roll_cd.wait_time;
 	
 func _physics_process(delta: float) -> void:
 	attacking = !attack_animation.is_stopped();
 	if (hovering_enemy && enemy && Input.is_action_pressed("attack") && attack_speed_cd.is_stopped()):
 		draw_bow();
 
-	if (Input.is_action_pressed("move") && (!rolling)):
+	if (Input.is_action_just_pressed("move") || Input.is_action_pressed("hold_move") && (!rolling)):
 		if (attacking):
 			cancelled = true;
 		move();
@@ -73,8 +77,12 @@ func _physics_process(delta: float) -> void:
 	if (kinematic_collision && kinematic_collision.get_collider()):
 		#sprite.play("idle");
 		pass
+		
 	if (rolling):
 		position += roll_target.normalized() * roll_speed;
+		
+	if (!roll_cd.is_stopped()):
+		dodge_icon.value = dodge_icon.max_value - roll_cd.time_left;
 	# abilities
 	# enemy colliding
 	#for i in get_slide_collision_count():
@@ -111,6 +119,7 @@ func play_direction(direction_target: Vector2, animation: String) -> void:
 func roll() -> void:
 	if (!roll_cd.is_stopped()): return;
 	if (target_arr.size() > 0 && target_arr.get(0)): target_arr.get(0).queue_free();
+	dodge_icon.value = 0;
 	collision_shape_2d.disabled = true;
 	target_arr.clear()
 	rolling = true;
@@ -150,7 +159,8 @@ func move() -> void:
 func _on_click_hitbox_mouse_entered(enemyNodePath : NodePath):
 	enemy = get_node(enemyNodePath);
 	hovering_enemy = true;
-	#hovered_enemies.append(enemy);
+	Input.set_custom_mouse_cursor(hover_cursor)
+	hovered_enemies.append(enemy);
 	## normal case where you hover and unhover
 	#if (hovered_enemies.size() == 1):
 		#enemy.get_child(0).texture = hovered_texture;
@@ -161,7 +171,12 @@ func _on_click_hitbox_mouse_entered(enemyNodePath : NodePath):
 			#hovered_enemies.get(0).get_child(0).texture == normal_texture;
 
 func _on_click_hitbox_mouse_exited():
-	hovering_enemy = false;
+	if (hovered_enemies.size() > 1):
+		hovering_enemy = true;
+	else:
+		hovering_enemy = false;
+		Input.set_custom_mouse_cursor(normal_cursor);
+	hovered_enemies.clear();
 	#var prev_enemy = hovered_enemies.pop_at(0);
 	## hovered enemy through 2 other enemies
 	#if (hovered_enemies.size() == 2):
@@ -190,18 +205,18 @@ func _on_roll_duration_timeout() -> void:
 	
 func _on_archer_animation_finished() -> void:
 	# plays idle animation in the direction of the last animation
-	if (sprite.animation == "dodge" + "_u" 
-	|| sprite.animation == "dodge" + "_l" 
-	|| sprite.animation == "dodge" + "_d" 
-	|| sprite.animation == "dodge" + "_r"): sprite.play("idle" + last_direction);
-	elif (sprite.animation == "death"):
+	if (sprite.animation == "death"):
 		get_tree().paused = true;
+	else:
+		sprite.play("idle" + last_direction);
 
 func _on_attack_animation_timeout() -> void:
 	# attack can be cancelled by inputting another action
 	if (cancelled): attack_speed_cd.stop();
 	# creates projectile after animation finishes and if not cancelled
-	else:
+
+func _on_archer_frame_changed() -> void:
+	if (sprite.frame == 10 && enemy && (sprite.animation == "draw_u" || sprite.animation == "draw_l" || sprite.animation == "draw_d" || sprite.animation == "draw_r")):
 		arrow = ARROW_PATH.instantiate();
 		arrow.enemy_to_hit = enemy;
 		rotation_character.look_at(enemy.position);

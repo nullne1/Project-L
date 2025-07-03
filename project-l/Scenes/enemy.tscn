@@ -516,15 +516,15 @@ animations = [{
 }]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_1f0kj"]
-radius = 15.5
-height = 78.0
+radius = 12.0
+height = 42.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_afpow"]
-radius = 27.9279
-height = 610.236
+radius = 16.3715
+height = 325.459
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_1f0kj"]
-radius = 46.0109
+radius = 35.0143
 
 [sub_resource type="Gradient" id="Gradient_jjvhh"]
 colors = PackedColorArray(1, 0, 0, 1, 1, 0, 0, 1)
@@ -533,19 +533,19 @@ colors = PackedColorArray(1, 0, 0, 1, 1, 0, 0, 1)
 gradient = SubResource("Gradient_jjvhh")
 
 [node name="Enemy" type="CharacterBody2D"]
-position = Vector2(69, 61)
+z_index = 1
 input_pickable = true
 script = ExtResource("1_1f0kj")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(0, -11)
-scale = Vector2(1.9, 1.819)
+scale = Vector2(1, 0.957)
 sprite_frames = SubResource("SpriteFrames_m4x7e")
-animation = &"attack_r"
+animation = &"walk_d"
 autoplay = "walk_r"
+frame_progress = 0.110968
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(-0.5, 0)
+position = Vector2(0, 6)
 shape = SubResource("CapsuleShape2D_1f0kj")
 debug_color = Color(3.17663e-06, 0.585575, 0.776292, 0.42)
 
@@ -554,13 +554,14 @@ position = Vector2(-32, -64)
 scale = Vector2(1.03839, 0.147484)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ClickHitbox"]
-position = Vector2(30.8169, 433.945)
+position = Vector2(30.8169, 474.628)
 shape = SubResource("CapsuleShape2D_afpow")
 debug_color = Color(0.965163, 0, 0.488374, 0.42)
 
 [node name="AttackRange" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AttackRange"]
+position = Vector2(0, 7)
 shape = SubResource("CircleShape2D_1f0kj")
 debug_color = Color(0, 0.398146, 0.919015, 0.42)
 
@@ -572,8 +573,9 @@ anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
 offset_left = -33.0
-offset_top = -64.0
+offset_top = -38.0
 offset_right = 31.0
+offset_bottom = 26.0
 grow_horizontal = 2
 grow_vertical = 0
 scale = Vector2(1.03839, 0.147484)

@@ -1,16 +1,61 @@
-[gd_scene load_steps=3 format=3 uid="uid://gd0rr0b054rc"]
+[gd_scene load_steps=9 format=3 uid="uid://gd0rr0b054rc"]
 
 [ext_resource type="Script" uid="uid://b0ttkdh8xwnh5" path="res://Scenes/target.gd" id="1_vq1qf"]
+[ext_resource type="Texture2D" uid="uid://ble85h7ic57iy" path="res://Assets/UI/StoneCursorWenrexa/PNG/cursor_anim1.png" id="2_ls7vh"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_vq1qf"]
 radius = 1.0
 height = 2.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2228f"]
+atlas = ExtResource("2_ls7vh")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ww0yb"]
+atlas = ExtResource("2_ls7vh")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dep1p"]
+atlas = ExtResource("2_ls7vh")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ael5k"]
+atlas = ExtResource("2_ls7vh")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_7jiyk"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2228f")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ww0yb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dep1p")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ael5k")
+}, {
+"duration": 1.0,
+"texture": null
+}],
+"loop": false,
+"name": &"default",
+"speed": 18.0
+}]
 
 [node name="Area2D" type="Area2D"]
 script = ExtResource("1_vq1qf")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape2D_vq1qf")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(0.7, 0.7)
+sprite_frames = SubResource("SpriteFrames_7jiyk")
+autoplay = "default"
 
 [connection signal="area_entered" from="." to="." method="_on_area_entered"]
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

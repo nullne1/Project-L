@@ -12,10 +12,7 @@ var mouse_position: Vector2;
 var enemy_for_player: CharacterBody2D;
 var enemy_num := 0;
 var rng = RandomNumberGenerator.new();
-var x : float;
-var y : float;
 var pos : Vector2;
-var viewport : Vector2;
 var distance_factor = 75;
 
 func _ready() -> void:
@@ -33,7 +30,9 @@ func spawn(spawnPos) -> void:
 func _process(_delta: float) -> void:
 	if (spawn_rate.is_stopped()):
 		pos = player.position;
-		viewport = get_viewport().size;
+		var viewport = get_viewport().size / 2;
+		var x : float;
+		var y : float;
 		match rng.randi_range(0, 3):
 			# left spawn
 			0:
