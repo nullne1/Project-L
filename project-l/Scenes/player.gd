@@ -41,7 +41,7 @@ var arrow: CharacterBody2D;
 
 func _ready() -> void:
 	# Sets animation, attack speed cooldown, and animation frames based on attacks per second
-	attacks_per_second = 4;
+	attacks_per_second = 2.5;
 	attack_speed = 1.0 / attacks_per_second;
 	attack_animation.wait_time = attack_speed / 2.5;
 	attack_speed_cd.wait_time = attack_speed;
@@ -60,7 +60,7 @@ func _physics_process(delta: float) -> void:
 	if (hovering_enemy && enemy && Input.is_action_pressed("attack") && attack_speed_cd.is_stopped()):
 		draw_bow();
 
-	if (Input.is_action_just_pressed("move") || Input.is_action_pressed("hold_move") && (!rolling)):
+	if ((Input.is_action_just_pressed("move") || Input.is_action_pressed("hold_move")) && !rolling):
 		if (attacking):
 			cancelled = true;
 		move();
