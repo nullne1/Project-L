@@ -9,15 +9,14 @@ const SWORD_SLASH_PATH = preload("res://Scenes/sword_slash.tscn")
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var attack_speed_cd: Timer = $AttackSpeedCD
 
-#var ms := 200;
-var ms := 250;
+var ms := 125;
 var in_range := false;
 var last_direction: String;
 var attack_finished: bool = true;
 var sword_slash_area: Area2D;
 
 func _ready() -> void:
-	attack_speed_cd.wait_time = 2;
+	attack_speed_cd.wait_time = 1;
 
 func _physics_process(delta: float) -> void:
 	enemy_health_bar.value = hp;
@@ -39,7 +38,7 @@ func _physics_process(delta: float) -> void:
 func sword_attack() -> void:
 	sword_slash_area = SWORD_SLASH_PATH.instantiate();
 	add_child(sword_slash_area);
-	sword_slash_area.rotation_degrees = rad_to_deg(get_angle_to(player.position)) - 90;
+	sword_slash_area.rotation_degrees = rad_to_deg(get_angle_to(player.collision_shape_2d.global_position)) - 90;
 	sword_slash_area.global_position = global_position;
 	attack_speed_cd.start();
 	

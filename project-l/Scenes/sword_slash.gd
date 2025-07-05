@@ -4,5 +4,5 @@ extends Area2D
 
 func _on_body_entered(body: Node2D) -> void:
 	if (body == player):
-		player.health -= 100;
-		player.player_health_bar.value -= 100;
+		player.health -= 0;
+		player.player_health_bar.value -= 20;

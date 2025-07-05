@@ -3,13 +3,14 @@
 [ext_resource type="Script" uid="uid://brd2vclbdmmed" path="res://Scenes/sword_slash.gd" id="1_33oib"]
 
 [sub_resource type="SegmentShape2D" id="SegmentShape2D_8xvdi"]
-b = Vector2(0, 6)
+b = Vector2(0, 9)
 
 [node name="Area2D" type="Area2D"]
 scale = Vector2(20, 20)
 script = ExtResource("1_33oib")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+scale = Vector2(0.5, 0.5)
 shape = SubResource("SegmentShape2D_8xvdi")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

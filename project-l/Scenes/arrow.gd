@@ -1,6 +1,6 @@
 extends CharacterBody2D
 
-@onready var grass: TileMapLayer = $"../../Grass"
+@onready var tile_map: TileMapLayer = $"../../TileMapLayer"
 @onready var area_2d: Area2D = $Area2D
 @onready var player: CharacterBody2D = $"../Player"
 
@@ -19,7 +19,7 @@ func _physics_process(_delta: float) -> void:
 	move_and_slide();
 	
 func _on_area_2d_body_entered(body: Node2D) -> void:
-	if (body == grass):
+	if (body == tile_map):
 		queue_free();
 	elif (body == enemy_to_hit):
 		queue_free();
