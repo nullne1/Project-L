@@ -2,7 +2,7 @@ extends CharacterBody2D
 @onready var mob_manager: Node2D = %MobManager
 @onready var player_health_bar: TextureProgressBar = %PlayerHealthBar
 @onready var dodge_icon: TextureProgressBar = %DodgeIcon
-#testasdgfasdf
+
 @onready var attack_speed_cd: Timer = $AttackSpeedCD
 @onready var attack_animation: Timer = $AttackAnimation
 @onready var enemies = mob_manager.enemies;
