@@ -50,9 +50,9 @@ func _ready() -> void:
 	sprite.sprite_frames.set_animation_speed("draw_d", attacks_per_second * 22);
 	sprite.sprite_frames.set_animation_speed("draw_r", attacks_per_second * 22);
 	
-	roll_duration.wait_time = ms / 1000 + 0.25;
+	roll_duration.wait_time = ms / 1000.0 + 0.25;
 	roll_cd.wait_time = 1;
-	roll_speed = ms / 24;
+	roll_speed = ms / 24.0;
 	dodge_icon.max_value = roll_cd.wait_time;
 	
 func _physics_process(delta: float) -> void:
