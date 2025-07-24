@@ -841,6 +841,8 @@ radius = 2.0
 height = 4.0
 
 [node name="Player" type="CharacterBody2D"]
+motion_mode = 1
+wall_min_slide_angle = 0.0
 script = ExtResource("1_onrkg")
 
 [node name="Camera2D" type="Camera2D" parent="."]
@@ -881,6 +883,8 @@ shape = SubResource("CircleShape2D_fkybt")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(1.14068e-05, 3)
 shape = SubResource("CapsuleShape2D_cvnsp")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
 
 [connection signal="animation_finished" from="Archer" to="." method="_on_archer_animation_finished"]
 [connection signal="frame_changed" from="Archer" to="." method="_on_archer_frame_changed"]

@@ -8,6 +8,7 @@ const SWORD_SLASH_PATH = preload("res://Scenes/sword_slash.tscn")
 @onready var enemy_health_bar: TextureProgressBar = %EnemyHealthBar
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var attack_speed_cd: Timer = $AttackSpeedCD
+@onready var navigation_agent_2d: NavigationAgent2D = $NavigationAgent2D
 
 var ms := 125;
 var in_range := false;
@@ -18,7 +19,7 @@ var sword_slash_area: Area2D;
 func _ready() -> void:
 	attack_speed_cd.wait_time = 1;
 
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	enemy_health_bar.value = hp;
 	# keeps attacking if player in range
 	if (in_range && attack_speed_cd.is_stopped()):
@@ -28,9 +29,10 @@ func _physics_process(delta: float) -> void:
 	if (in_range):
 		velocity = Vector2.ZERO;
 	elif (position.distance_to(player.position) > 3 && attack_finished):
-		velocity = (player.position - position).normalized() * ms;
+		var dir = to_local(navigation_agent_2d.get_next_path_position()).normalized()
+		velocity = dir * ms;
 		play_direction(player.position, "walk");
-		move_and_collide(delta * velocity);
+		move_and_slide();
 		
 	if (hp <= 0):
 		queue_free();
@@ -96,3 +98,6 @@ func _on_animated_sprite_2d_frame_changed() -> void:
 	if (sprite.frame == 4 && (sprite.animation == "attack_u" || sprite.animation == "attack_l" || sprite.animation == "attack_d" || sprite.animation == "attack_r")): 
 		sword_attack();
 		
+
+func _on_nav_timer_timeout() -> void:
+	navigation_agent_2d.target_position = player.global_position;

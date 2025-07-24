@@ -1,6 +1,6 @@
 extends CharacterBody2D
 
-@onready var tile_map: TileMapLayer = $"../../TileMapLayer"
+@onready var tile_map: TileMapLayer = $"../../Map/TileMapLayer"
 @onready var area_2d: Area2D = $Area2D
 @onready var player: CharacterBody2D = $"../Player"
 

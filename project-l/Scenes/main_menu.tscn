@@ -1,11 +1,11 @@
 [gd_scene load_steps=7 format=3 uid="uid://3rr022rkllo1"]
 
 [ext_resource type="Script" uid="uid://c7awdbnv3dxsw" path="res://Scenes/main_menu.gd" id="1_opfnp"]
-[ext_resource type="Texture2D" uid="uid://svx4mub2vb5f" path="res://Assets/UI/UIBundleFree/main_menu.png" id="2_cp0ys"]
-[ext_resource type="Texture2D" uid="uid://rydn4qsqagf2" path="res://Assets/UI/Background/Yellow.png" id="3_yhxw7"]
-[ext_resource type="Texture2D" uid="uid://dtwbni4qsqjpb" path="res://Assets/UI/UIBundleFree/play_button.png" id="4_trj04"]
-[ext_resource type="Texture2D" uid="uid://fi6fesy5aktj" path="res://Assets/UI/UIBundleFree/settings_button.png" id="5_16hvj"]
-[ext_resource type="Texture2D" uid="uid://dxfkpj7onicy0" path="res://Assets/UI/UIBundleFree/exit_button.png" id="6_vr1f0"]
+[ext_resource type="Texture2D" uid="uid://b6rycfj6n3v21" path="res://Assets/UI/UIBundleFree/menu.png" id="2_opfnp"]
+[ext_resource type="Texture2D" uid="uid://12qubjaskb4n" path="res://Assets/UI/Background/Gray.png" id="3_cp0ys"]
+[ext_resource type="Texture2D" uid="uid://cj01iaiwi1ngx" path="res://Assets/UI/UIBundleFree/play.png" id="4_yhxw7"]
+[ext_resource type="Texture2D" uid="uid://mxgp8p8hsjdo" path="res://Assets/UI/UIBundleFree/settings.png" id="5_trj04"]
+[ext_resource type="Texture2D" uid="uid://0njwohsrksre" path="res://Assets/UI/UIBundleFree/exit.png" id="6_16hvj"]
 
 [node name="MainMenu" type="Node"]
 script = ExtResource("1_opfnp")
@@ -16,14 +16,15 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -238.5
-offset_top = -211.5
-offset_right = 238.5
-offset_bottom = 211.5
+offset_left = -243.0
+offset_top = -296.0
+offset_right = 267.0
+offset_bottom = 274.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_cp0ys")
-stretch_mode = 4
+size_flags_horizontal = 4
+texture = ExtResource("2_opfnp")
+expand_mode = 4
 
 [node name="Background" type="TextureRect" parent="."]
 z_index = -1
@@ -32,7 +33,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("3_yhxw7")
+texture = ExtResource("3_cp0ys")
 stretch_mode = 1
 
 [node name="PlayButton" type="TextureButton" parent="."]
@@ -41,13 +42,15 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -82.0
-offset_top = -114.0
-offset_right = 89.0
-offset_bottom = -63.0
+offset_left = -93.0
+offset_top = -144.0
+offset_right = 78.0
+offset_bottom = -93.0
 grow_horizontal = 2
 grow_vertical = 2
-texture_normal = ExtResource("4_trj04")
+scale = Vector2(1.24, 1.2)
+size_flags_horizontal = 4
+texture_normal = ExtResource("4_yhxw7")
 stretch_mode = 4
 
 [node name="SettingsButton" type="TextureButton" parent="."]
@@ -56,13 +59,14 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -82.0
-offset_top = -36.0
-offset_right = 89.0
-offset_bottom = 14.0
+offset_left = -93.0
+offset_top = -46.0
+offset_right = 78.0
+offset_bottom = 4.0
 grow_horizontal = 2
 grow_vertical = 2
-texture_normal = ExtResource("5_16hvj")
+scale = Vector2(1.24, 1.2)
+texture_normal = ExtResource("5_trj04")
 stretch_mode = 4
 
 [node name="ExitButton" type="TextureButton" parent="."]
@@ -71,15 +75,16 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -82.0
-offset_top = 46.0
-offset_right = 89.0
-offset_bottom = 96.0
+offset_left = -93.0
+offset_top = 56.0001
+offset_right = 78.0
+offset_bottom = 106.0
 grow_horizontal = 2
 grow_vertical = 2
+scale = Vector2(1.24, 1.2)
 size_flags_horizontal = 4
 size_flags_vertical = 4
-texture_normal = ExtResource("6_vr1f0")
+texture_normal = ExtResource("6_16hvj")
 stretch_mode = 4
 
 [connection signal="pressed" from="PlayButton" to="." method="_on_play_button_pressed"]

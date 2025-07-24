@@ -2,7 +2,7 @@ extends CharacterBody2D
 @onready var mob_manager: Node2D = %MobManager
 @onready var player_health_bar: TextureProgressBar = %PlayerHealthBar
 @onready var dodge_icon: TextureProgressBar = %DodgeIcon
-#test
+
 @onready var attack_speed_cd: Timer = $AttackSpeedCD
 @onready var attack_animation: Timer = $AttackAnimation
 @onready var enemies = mob_manager.enemies;
@@ -12,6 +12,7 @@ extends CharacterBody2D
 @onready var collision_shape_2d: CollisionShape2D = $CollisionShape2D
 @onready var rotation_character: CharacterBody2D = $RotationCharacter
 @onready var sprite: AnimatedSprite2D = $Archer
+@onready var navigation_agent_2d: NavigationAgent2D = $NavigationAgent2D
 
 const ARROW_PATH = preload("res://Scenes/arrow.tscn");
 const TARGET_PATH = preload("res://Scenes/target.tscn");
@@ -41,7 +42,7 @@ var arrow: CharacterBody2D;
 
 func _ready() -> void:
 	# Sets animation, attack speed cooldown, and animation frames based on attacks per second
-	attacks_per_second = 2.5;
+	attacks_per_second = 4;
 	attack_speed = 1.0 / attacks_per_second;
 	attack_animation.wait_time = attack_speed / 2.5;
 	attack_speed_cd.wait_time = attack_speed;
@@ -50,9 +51,9 @@ func _ready() -> void:
 	sprite.sprite_frames.set_animation_speed("draw_d", attacks_per_second * 22);
 	sprite.sprite_frames.set_animation_speed("draw_r", attacks_per_second * 22);
 	
-	roll_duration.wait_time = ms / 1000.0 + 0.25;
+	roll_duration.wait_time = ms / 1000 + 0.25;
 	roll_cd.wait_time = 1;
-	roll_speed = ms / 24.0;
+	roll_speed = ms / 24;
 	dodge_icon.max_value = roll_cd.wait_time;
 	
 func _physics_process(delta: float) -> void:
@@ -71,12 +72,7 @@ func _physics_process(delta: float) -> void:
 		roll();
 		
 	if (position.distance_to(target) > 3):
-		kinematic_collision = move_and_collide(velocity * delta);
-		
-	# check for collision
-	if (kinematic_collision && kinematic_collision.get_collider()):
-		#sprite.play("idle");
-		pass
+		move_and_slide();
 		
 	if (rolling):
 		position += roll_target.normalized() * roll_speed;
@@ -115,10 +111,20 @@ func play_direction(direction_target: Vector2, animation: String) -> void:
 	elif (angle < 60 && angle > 0 || angle < 0 && angle > -60):
 		sprite.play(animation + "_r");
 		last_direction = "_r"
-		
+
+func draw_bow() -> void:
+	if (target_arr.size() > 0 && target_arr.get(0)): target_arr.get(0).queue_free();
+	cancelled = false;
+	play_direction(enemy.position, "draw");
+	attack_animation.start();
+	attack_speed_cd.start();
+	velocity = Vector2(0, 0);
+
 func roll() -> void:
 	if (!roll_cd.is_stopped()): return;
-	if (target_arr.size() > 0 && target_arr.get(0)): target_arr.get(0).queue_free();
+	if (target_arr.size() > 0 && target_arr.get(0) && position.distance_to(target_arr.get(0).position) < roll_duration.wait_time * 900):
+		print("distance from mouse: ", position.distance_to(target_arr.get(0).position));
+		target_arr.get(0).queue_free();
 	dodge_icon.value = 0;
 	collision_shape_2d.disabled = true;
 	target_arr.clear()
@@ -129,14 +135,6 @@ func roll() -> void:
 	roll_target = get_local_mouse_position();
 	target = get_global_mouse_position()
 	play_direction(target, "dodge");
-	
-func draw_bow() -> void:
-	if (target_arr.size() > 0 && target_arr.get(0)): target_arr.get(0).queue_free();
-	cancelled = false;
-	play_direction(enemy.position, "draw");
-	attack_animation.start();
-	attack_speed_cd.start();
-	velocity = Vector2(0, 0);
 
 func move() -> void:
 	# creates a target area to play "idle" when player enters that area
@@ -151,8 +149,10 @@ func move() -> void:
 	get_parent().add_child(target_area);
 	target_area.global_position = target;
 	target_arr.append(target_area);
-	
-	velocity = (target - position).normalized() * ms;
+	navigation_agent_2d.target_position = target
+	var dir = to_local(navigation_agent_2d.get_next_path_position()).normalized()
+	velocity = dir * ms;
+	#velocity = (target - position).normalized() * ms;
 	
 	play_direction(target, "run");
 

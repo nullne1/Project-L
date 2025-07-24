@@ -535,6 +535,8 @@ gradient = SubResource("Gradient_jjvhh")
 [node name="Enemy" type="CharacterBody2D"]
 z_index = 1
 input_pickable = true
+motion_mode = 1
+wall_min_slide_angle = 0.0
 script = ExtResource("1_1f0kj")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
@@ -591,7 +593,14 @@ texture = ExtResource("1_ymxaj")
 [node name="AttackSpeedCD" type="Timer" parent="."]
 one_shot = true
 
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+
+[node name="NavTimer" type="Timer" parent="."]
+wait_time = 0.1
+autostart = true
+
 [connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]
 [connection signal="frame_changed" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_frame_changed"]
 [connection signal="body_entered" from="AttackRange" to="." method="_on_attack_range_body_entered"]
 [connection signal="body_exited" from="AttackRange" to="." method="_on_attack_range_body_exited"]
+[connection signal="timeout" from="NavTimer" to="." method="_on_nav_timer_timeout"]
