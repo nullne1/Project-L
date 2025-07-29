@@ -1,6 +1,5 @@
 extends CharacterBody2D
 @onready var mob_manager: Node2D = %MobManager
-@onready var player_health_bar: TextureProgressBar = %PlayerHealthBar
 @onready var dodge_icon: TextureProgressBar = %DodgeIcon
 
 @onready var attack_speed_cd: Timer = $AttackSpeedCD
@@ -20,7 +19,7 @@ const hover_cursor = preload("res://Assets/UI/StoneCursorWenrexa/PNG/05.png");
 const normal_cursor = preload("res://Assets/UI/StoneCursorWenrexa/PNG/01.png");
 
 var health := 100;
-var ms := 175;
+var ms := 140;
 var attacks_per_second: float;
 var attack_speed: float;
 var target := position;
@@ -39,6 +38,8 @@ var last_direction: String;
 var cancelled: bool;
 var changed_target: bool;
 var arrow: CharacterBody2D;
+var after_roll_target: Area2D;
+var after_roll_move: bool;
 
 func _ready() -> void:
 	# Sets animation, attack speed cooldown, and animation frames based on attacks per second
@@ -79,6 +80,11 @@ func _physics_process(delta: float) -> void:
 		
 	if (!roll_cd.is_stopped()):
 		dodge_icon.value = dodge_icon.max_value - roll_cd.time_left;
+	
+	if (after_roll_move && sprite.animation == "idle_u" || sprite.animation == "idle_l" || sprite.animation == "idle_d" || sprite.animation == "idle_r"):
+		velocity = Vector2.ZERO;
+		after_roll_move = false;
+	
 	# abilities
 	# enemy colliding
 	#for i in get_slide_collision_count():
@@ -122,9 +128,10 @@ func draw_bow() -> void:
 
 func roll() -> void:
 	if (!roll_cd.is_stopped()): return;
-	if (target_arr.size() > 0 && target_arr.get(0) && position.distance_to(target_arr.get(0).position) < roll_duration.wait_time * 900):
+	if (target_arr.size() > 0 && target_arr.get(0)):
 		print("distance from mouse: ", position.distance_to(target_arr.get(0).position));
-		target_arr.get(0).queue_free();
+		after_roll_target = target_arr.get(0);
+		after_roll_move = true;
 	dodge_icon.value = 0;
 	collision_shape_2d.disabled = true;
 	target_arr.clear()
@@ -200,6 +207,10 @@ func _on_click_hitbox_mouse_exited():
 			#enemy.get_child(0).texture = normal_texture;
 	
 func _on_roll_duration_timeout() -> void:
+	if (after_roll_move):
+		var dir = to_local(navigation_agent_2d.get_next_path_position()).normalized();
+		velocity = dir * ms;
+		play_direction(after_roll_target.position, "run");
 	collision_shape_2d.disabled = false;
 	rolling = false;
 	

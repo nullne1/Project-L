@@ -4,7 +4,9 @@
 [ext_resource type="Texture2D" uid="uid://cnnb17bfopkl6" path="res://Assets/Environment/decorative.png" id="2_21xkr"]
 [ext_resource type="PackedScene" uid="uid://3j2nug1fn8r2" path="res://Scenes/enemy.tscn" id="4_kry3j"]
 [ext_resource type="Texture2D" uid="uid://de18ay0evrlnh" path="res://Assets/UI/dodge.png" id="5_21xkr"]
+[ext_resource type="Script" uid="uid://c3rfo00cnoldh" path="res://Scenes/control.gd" id="5_344ge"]
 [ext_resource type="Script" uid="uid://dldxmc7grnpx1" path="res://Scenes/mob_manager.gd" id="5_kry3j"]
+[ext_resource type="Texture2D" uid="uid://dra60e88ff5n0" path="res://Assets/UI/UIBundleFree/hotbar.png" id="7_ynf5e"]
 [ext_resource type="Texture2D" uid="uid://xurhhu8or1ym" path="res://Assets/Environment/mainlevbuild.png" id="8_344ge"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ynf5e"]
@@ -1365,12 +1367,6 @@ vertices = PackedVector2Array(3120.95, -2059.02, 3097.05, 2772, -2341, 2772, -23
 polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
 outlines = Array[PackedVector2Array]([PackedVector2Array(3131, -2069, 3107, 2782, -2351, 2782, -2351, -2080)])
 
-[sub_resource type="Gradient" id="Gradient_jjvhh"]
-colors = PackedColorArray(1, 0, 0, 1, 1, 0, 0, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_kry3j"]
-gradient = SubResource("Gradient_jjvhh")
-
 [node name="Main" type="Node2D"]
 
 [node name="Map" type="Node2D" parent="."]
@@ -1381,7 +1377,8 @@ tile_map_data = PackedByteArray("AABb//X/AAAPAAYAAABb//b/AAAPAAYAAABb//f/AAAPAAQ
 tile_set = SubResource("TileSet_hptm8")
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="Map"]
-position = Vector2(-405, -346)
+visible = false
+position = Vector2(-362, -346)
 navigation_polygon = SubResource("NavigationPolygon_21xkr")
 
 [node name="MobManager" type="Node2D" parent="."]
@@ -1400,24 +1397,9 @@ offset_left = -20.0
 offset_top = -20.0
 offset_right = 20.0
 offset_bottom = 20.0
+script = ExtResource("5_344ge")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="Control"]
-
-[node name="PlayerHealthBar" type="TextureProgressBar" parent="Control/CanvasLayer"]
-unique_name_in_owner = true
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -91.0
-offset_top = -64.0
-offset_right = -27.0
-grow_horizontal = 2
-grow_vertical = 0
-scale = Vector2(2.92, 0.519998)
-value = 100.0
-texture_progress = SubResource("GradientTexture2D_kry3j")
 
 [node name="DodgeIcon" type="TextureProgressBar" parent="Control/CanvasLayer"]
 unique_name_in_owner = true
@@ -1426,10 +1408,10 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -184.0
-offset_top = -80.0
-offset_right = -120.0
-offset_bottom = -16.0
+offset_left = 77.0
+offset_top = -98.0
+offset_right = 141.0
+offset_bottom = -34.0
 grow_horizontal = 2
 grow_vertical = 0
 max_value = 5.0
@@ -1437,6 +1419,27 @@ step = 0.0
 value = 5.0
 fill_mode = 4
 texture_progress = ExtResource("5_21xkr")
+
+[node name="TextureRect" type="TextureRect" parent="Control/CanvasLayer"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -92.0
+offset_top = -119.0
+offset_right = 92.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource("7_ynf5e")
+stretch_mode = 4
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/CanvasLayer/TextureRect"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
 
 [node name="User" type="Node2D" parent="."]
 

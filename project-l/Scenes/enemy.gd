@@ -10,7 +10,7 @@ const SWORD_SLASH_PATH = preload("res://Scenes/sword_slash.tscn")
 @onready var attack_speed_cd: Timer = $AttackSpeedCD
 @onready var navigation_agent_2d: NavigationAgent2D = $NavigationAgent2D
 
-var ms := 125;
+var ms := 100;
 var in_range := false;
 var last_direction: String;
 var attack_finished: bool = true;
