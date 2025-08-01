@@ -9,18 +9,18 @@ extends CharacterBody2D
 @onready var roll_cd: Timer = $RollCD
 @onready var roll_duration: Timer = $RollDuration
 @onready var collision_shape_2d: CollisionShape2D = $CollisionShape2D
-@onready var rotation_character: CharacterBody2D = $RotationCharacter
 @onready var sprite: AnimatedSprite2D = $Archer
 @onready var navigation_agent_2d: NavigationAgent2D = $NavigationAgent2D
+@onready var heart_h_box_container: HBoxContainer = %HeartHBoxContainer
 
 const ARROW_PATH = preload("res://Scenes/arrow.tscn");
 const TARGET_PATH = preload("res://Scenes/target.tscn");
 const hover_cursor = preload("res://Assets/UI/StoneCursorWenrexa/PNG/05.png");
 const normal_cursor = preload("res://Assets/UI/StoneCursorWenrexa/PNG/01.png");
+const HEART = preload("res://Scenes/heart.tscn");
 
-var health := 100;
-var ms := 140;
-var attacks_per_second: float;
+@export var ms := 140;
+@export var attacks_per_second: float;
 var attack_speed: float;
 var target := position;
 var hovering_enemy: bool;
@@ -40,10 +40,13 @@ var changed_target: bool;
 var arrow: CharacterBody2D;
 var after_roll_target: Area2D;
 var after_roll_move: bool;
+var hearts: Array;
+var num_hearts := 3;
+var dead:= false;
+var direction;
 
 func _ready() -> void:
 	# Sets animation, attack speed cooldown, and animation frames based on attacks per second
-	attacks_per_second = 4;
 	attack_speed = 1.0 / attacks_per_second;
 	attack_animation.wait_time = attack_speed / 2.5;
 	attack_speed_cd.wait_time = attack_speed;
@@ -57,17 +60,24 @@ func _ready() -> void:
 	roll_speed = ms / 24;
 	dodge_icon.max_value = roll_cd.wait_time;
 	
-func _physics_process(delta: float) -> void:
+	# hearts
+	for i in num_hearts:
+		var new_heart = HEART.instantiate() as TextureRect;
+		heart_h_box_container.add_child(new_heart);
+		hearts.append(new_heart);
+	
+	
+func _physics_process(_delta: float) -> void:
 	attacking = !attack_animation.is_stopped();
-	if (hovering_enemy && enemy && Input.is_action_pressed("attack") && attack_speed_cd.is_stopped()):
+	if (!dead && hovering_enemy && enemy && Input.is_action_pressed("attack") && attack_speed_cd.is_stopped()):
 		draw_bow();
 
-	if ((Input.is_action_just_pressed("move") || Input.is_action_pressed("hold_move")) && !rolling):
+	if (!dead && (Input.is_action_just_pressed("move") || Input.is_action_pressed("hold_move")) && !rolling):
 		if (attacking):
 			cancelled = true;
 		move();
 
-	if (Input.is_action_pressed("roll")):
+	if (!dead && Input.is_action_pressed("roll")):
 		if (attacking):
 			cancelled = true;
 		roll();
@@ -80,28 +90,30 @@ func _physics_process(delta: float) -> void:
 		
 	if (!roll_cd.is_stopped()):
 		dodge_icon.value = dodge_icon.max_value - roll_cd.time_left;
-	
+
 	if (after_roll_move && sprite.animation == "idle_u" || sprite.animation == "idle_l" || sprite.animation == "idle_d" || sprite.animation == "idle_r"):
 		velocity = Vector2.ZERO;
 		after_roll_move = false;
 	
 	# abilities
-	# enemy colliding
-	#for i in get_slide_collision_count():
-		#var collision = get_slide_collision(i)
-		#velocity = Vector2(0, 0);
-		#if (collision.get_collider() in enemies && i_time.time_left == 0):
-			#player_health_bar.value -= 0;
-			#health -= 0;
-			#i_time.start()
-	# death
-	if (health <= 0):
-		sprite.play("death");
 	
-	#if (hovered_enemies.size() > 2):
-		#for en in hovered_enemies:
-			#if (en):
-				#en.find_child("Sprite2D").texture = normal_texture;
+	# death
+
+func death() -> void:
+	dead = true;
+	velocity = Vector2.ZERO;
+	sprite.play("death");
+
+func lose_heart() -> void:
+	if (hearts.back()):
+		hearts.back().queue_free();
+		hearts.pop_back();
+	else: death();
+	
+func gain_heart() -> void:
+	var new_heart = HEART.instantiate() as TextureRect;
+	heart_h_box_container.add_child(new_heart);
+	hearts.append(new_heart);
 
 func play_direction(direction_target: Vector2, animation: String) -> void:
 	var angle := rad_to_deg(position.angle_to_point(direction_target));
@@ -129,7 +141,7 @@ func draw_bow() -> void:
 func roll() -> void:
 	if (!roll_cd.is_stopped()): return;
 	if (target_arr.size() > 0 && target_arr.get(0)):
-		print("distance from mouse: ", position.distance_to(target_arr.get(0).position));
+		#print("distance from mouse: ", position.distance_to(target_arr.get(0).position));
 		after_roll_target = target_arr.get(0);
 		after_roll_move = true;
 	dodge_icon.value = 0;
@@ -207,7 +219,7 @@ func _on_click_hitbox_mouse_exited():
 			#enemy.get_child(0).texture = normal_texture;
 	
 func _on_roll_duration_timeout() -> void:
-	if (after_roll_move):
+	if (after_roll_move && after_roll_target):
 		var dir = to_local(navigation_agent_2d.get_next_path_position()).normalized();
 		velocity = dir * ms;
 		play_direction(after_roll_target.position, "run");
@@ -227,11 +239,11 @@ func _on_attack_animation_timeout() -> void:
 	# creates projectile after animation finishes and if not cancelled
 
 func _on_archer_frame_changed() -> void:
-	if (sprite.frame == 10 && enemy && (sprite.animation == "draw_u" || sprite.animation == "draw_l" || sprite.animation == "draw_d" || sprite.animation == "draw_r")):
+	if (sprite.frame == 7 && enemy && (sprite.animation == "draw_u" || sprite.animation == "draw_l" || sprite.animation == "draw_d" || sprite.animation == "draw_r")):
+		direction = position.angle_to_point(enemy.position);
 		arrow = ARROW_PATH.instantiate();
 		arrow.enemy_to_hit = enemy;
-		rotation_character.look_at(enemy.position);
-		arrow.direction = rotation_character.rotation;
+		arrow.direction = direction;
 		arrow.global_position = global_position;
-		arrow.global_rotation = rotation_character.global_rotation;
+		arrow.global_rotation = direction;
 		get_parent().add_child(arrow);

@@ -834,7 +834,7 @@ animations = [{
 }]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_fkybt"]
-radius = 0.4
+radius = 1.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_cvnsp"]
 radius = 2.0
@@ -844,6 +844,7 @@ height = 4.0
 motion_mode = 1
 wall_min_slide_angle = 0.0
 script = ExtResource("1_onrkg")
+attacks_per_second = 2.0
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(2, 2)
@@ -852,11 +853,8 @@ zoom = Vector2(2, 2)
 position = Vector2(1.01328e-06, -2.98023e-08)
 scale = Vector2(0.17, 0.17)
 sprite_frames = SubResource("SpriteFrames_dxncu")
-animation = &"draw_u"
+animation = &"draw_l"
 autoplay = "idle_d"
-
-[node name="RotationCharacter" type="CharacterBody2D" parent="."]
-visible = false
 
 [node name="AttackAnimation" type="Timer" parent="."]
 one_shot = true

@@ -1419,6 +1419,7 @@ step = 0.0
 value = 5.0
 fill_mode = 4
 texture_progress = ExtResource("5_21xkr")
+metadata/_edit_use_anchors_ = true
 
 [node name="TextureRect" type="TextureRect" parent="Control/CanvasLayer"]
 anchors_preset = 7
@@ -1435,11 +1436,22 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 texture = ExtResource("7_ynf5e")
 stretch_mode = 4
+metadata/_edit_use_anchors_ = true
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Control/CanvasLayer/TextureRect"]
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
+metadata/_edit_use_anchors_ = true
+
+[node name="HeartHBoxContainer" type="HBoxContainer" parent="Control/CanvasLayer"]
+unique_name_in_owner = true
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 78.0
+offset_bottom = 42.0
+scale = Vector2(3, 3)
+theme_override_constants/separation = -14
 
 [node name="User" type="Node2D" parent="."]
 
