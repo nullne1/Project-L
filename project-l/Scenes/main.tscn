@@ -1,11 +1,10 @@
-[gd_scene load_steps=13 format=4 uid="uid://bjk1u0b1tb48r"]
+[gd_scene load_steps=12 format=4 uid="uid://bjk1u0b1tb48r"]
 
-[ext_resource type="PackedScene" uid="uid://be281pixkehmv" path="res://Scenes/player.tscn" id="2_8gbba"]
+[ext_resource type="PackedScene" uid="uid://be281pixkehmv" path="res://Scenes/Player/player.tscn" id="2_8gbba"]
 [ext_resource type="Texture2D" uid="uid://cnnb17bfopkl6" path="res://Assets/Environment/decorative.png" id="2_21xkr"]
-[ext_resource type="PackedScene" uid="uid://3j2nug1fn8r2" path="res://Scenes/enemy.tscn" id="4_kry3j"]
+[ext_resource type="PackedScene" uid="uid://3j2nug1fn8r2" path="res://Scenes/Enemies/enemy.tscn" id="4_kry3j"]
 [ext_resource type="Texture2D" uid="uid://de18ay0evrlnh" path="res://Assets/UI/dodge.png" id="5_21xkr"]
-[ext_resource type="Script" uid="uid://c3rfo00cnoldh" path="res://Scenes/control.gd" id="5_344ge"]
-[ext_resource type="Script" uid="uid://dldxmc7grnpx1" path="res://Scenes/mob_manager.gd" id="5_kry3j"]
+[ext_resource type="Script" uid="uid://dldxmc7grnpx1" path="res://Scenes/Enemies/mob_manager.gd" id="5_kry3j"]
 [ext_resource type="Texture2D" uid="uid://dra60e88ff5n0" path="res://Assets/UI/UIBundleFree/hotbar.png" id="7_ynf5e"]
 [ext_resource type="Texture2D" uid="uid://xurhhu8or1ym" path="res://Assets/Environment/mainlevbuild.png" id="8_344ge"]
 
@@ -1397,7 +1396,6 @@ offset_left = -20.0
 offset_top = -20.0
 offset_right = 20.0
 offset_bottom = 20.0
-script = ExtResource("5_344ge")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="Control"]
 
@@ -1452,6 +1450,7 @@ offset_right = 78.0
 offset_bottom = 42.0
 scale = Vector2(3, 3)
 theme_override_constants/separation = -14
+metadata/_edit_use_anchors_ = true
 
 [node name="User" type="Node2D" parent="."]
 
@@ -1460,3 +1459,4 @@ unique_name_in_owner = true
 z_index = 1
 texture_filter = 1
 scale = Vector2(5, 5)
+num_hearts = 5
