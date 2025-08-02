@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://dj21x48rqh64q"]
+
+[ext_resource type="Texture2D" uid="uid://bdfy12s17kx47" path="res://Assets/UI/UIBundleFree/full_heart.png" id="1_cwa6h"]
+
+[node name="TextureRect" type="TextureRect"]
+offset_right = 64.0
+offset_bottom = 64.0
+texture = ExtResource("1_cwa6h")
