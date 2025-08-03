@@ -9,7 +9,7 @@ extends CharacterBody2D
 @onready var roll_cd: Timer = $RollCD
 @onready var roll_duration: Timer = $RollDuration
 @onready var collision_shape_2d: CollisionShape2D = $CollisionShape2D
-@onready var sprite: AnimatedSprite2D = $Archer
+@onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var navigation_agent_2d: NavigationAgent2D = $NavigationAgent2D
 @onready var heart_h_box_container: HBoxContainer = %HeartHBoxContainer
 
@@ -39,8 +39,8 @@ var last_direction: String;
 var cancelled: bool;
 var changed_target: bool;
 var arrow: CharacterBody2D;
-var after_roll_target: Area2D;
-var after_roll_move: bool;
+var after_roll_auto_target: Area2D;
+var after_roll_auto_move: bool;
 var hearts: Array;
 var dead:= false;
 var direction;
@@ -57,7 +57,7 @@ func _ready() -> void:
 	sprite.sprite_frames.set_animation_speed("draw_u", attacks_per_second * 22);
 	
 	roll_duration.wait_time = ms / 1000 + 0.25;
-	roll_cd.wait_time = 1;
+	roll_cd.wait_time = 4;
 	roll_speed = ms / 24;
 	dodge_icon.max_value = roll_cd.wait_time;
 	
@@ -69,19 +69,18 @@ func _ready() -> void:
 	
 	
 func _physics_process(_delta: float) -> void:
-	attacking = !attack_animation.is_stopped();
 	if (!dead && hovering_enemy && enemy && Input.is_action_pressed("attack") && attack_speed_cd.is_stopped()):
 		draw_bow();
 
 	if (!dead && (Input.is_action_just_pressed("move") || Input.is_action_pressed("hold_move"))):
-		if (attacking):
+		if (!attack_animation.is_stopped()):
 			cancelled = true;
 		if (rolling):
 			move_while_roll = true;
 		move();
 
 	if (!dead && Input.is_action_pressed("roll")):
-		if (attacking):
+		if (!attack_animation.is_stopped()):
 			cancelled = true;
 		roll();
 		
@@ -94,9 +93,9 @@ func _physics_process(_delta: float) -> void:
 	if (!roll_cd.is_stopped()):
 		dodge_icon.value = dodge_icon.max_value - roll_cd.time_left;
 
-	if (after_roll_move && sprite.animation == "idle_u" || sprite.animation == "idle_l" || sprite.animation == "idle_d" || sprite.animation == "idle_r"):
-		velocity = Vector2.ZERO;
-		after_roll_move = false;
+	if (after_roll_auto_move && sprite.animation == "idle_u" || sprite.animation == "idle_l" || sprite.animation == "idle_d" || sprite.animation == "idle_r"):
+		#velocity = Vector2.ZERO;
+		after_roll_auto_move = false;
 	
 	# abilities
 	
@@ -145,8 +144,9 @@ func roll() -> void:
 	if (!roll_cd.is_stopped()): return;
 	if (target_arr.size() > 0 && target_arr.get(0)):
 		#print("distance from mouse: ", position.distance_to(target_arr.get(0).position));
-		after_roll_target = target_arr.get(0);
-		after_roll_move = true;
+		after_roll_auto_target = target_arr.get(0);
+		after_roll_auto_move = true;
+	
 	dodge_icon.value = 0;
 	collision_shape_2d.disabled = true;
 	target_arr.clear()
@@ -165,7 +165,8 @@ func move() -> void:
 			var t = target_arr.pop_at(n);
 			if (t):
 				t.queue_free();
-	
+	if (after_roll_auto_move && after_roll_auto_target):
+		after_roll_auto_target.queue_free();
 	target = get_global_mouse_position();
 	var target_area = TARGET_PATH.instantiate() as Area2D;
 	get_parent().add_child(target_area);
@@ -194,10 +195,10 @@ func _on_click_hitbox_mouse_exited():
 	
 func _on_roll_duration_timeout() -> void:
 	move_while_roll = false;
-	if (after_roll_move && after_roll_target):
+	if (after_roll_auto_move && after_roll_auto_target && !move_while_roll):
 		var dir = to_local(navigation_agent_2d.get_next_path_position()).normalized();
 		velocity = dir * ms;
-		play_direction(after_roll_target.position, "run");
+		play_direction(after_roll_auto_target.position, "run");
 	collision_shape_2d.disabled = false;
 	rolling = false;
 	
@@ -213,7 +214,7 @@ func _on_attack_animation_timeout() -> void:
 	# creates projectile after animation finishes and if not cancelled
 	
 func _on_archer_frame_changed() -> void:
-	if (sprite.frame == 6 && enemy && (sprite.animation == "draw_u" || sprite.animation == "draw_l" || sprite.animation == "draw_d" || sprite.animation == "draw_r")):
+	if (sprite.frame == 8 && enemy && (sprite.animation == "draw_u" || sprite.animation == "draw_l" || sprite.animation == "draw_d" || sprite.animation == "draw_r")):
 		direction = position.angle_to_point(enemy.position);
 		arrow = ARROW_PATH.instantiate();
 		arrow.enemy_to_hit = enemy;

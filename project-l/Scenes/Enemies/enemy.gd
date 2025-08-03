@@ -2,7 +2,7 @@ extends CharacterBody2D
 
 const SWORD_SLASH_PATH = preload("res://Scenes/Enemies/sword_slash.tscn")
 
-@onready var hp := 900000;
+@onready var hp := 100;
 @onready var player: CharacterBody2D = $"../../User/Player"
 @onready var asprite: Sprite2D = $Sprite2D
 @onready var enemy_health_bar: TextureProgressBar = %EnemyHealthBar
@@ -73,7 +73,7 @@ func play_direction_attack(direction_target: Vector2, animation: String) -> void
 	elif (angle < 30 && angle > 0 || angle < 0 && angle > -30):
 		sprite.play(animation + "_r");
 		last_direction = "_r"
-		
+
 func _on_attack_range_body_entered(body: Node2D) -> void:
 	if (body == player && attack_speed_cd.is_stopped()):
 		attack_finished = false;
@@ -81,7 +81,7 @@ func _on_attack_range_body_entered(body: Node2D) -> void:
 		in_range = true;
 	elif (body == player):
 		in_range = true;
-		
+
 func _on_attack_range_body_exited(body: Node2D) -> void:
 	if (body == player):
 		in_range = false;
@@ -93,11 +93,10 @@ func _on_animated_sprite_2d_animation_finished() -> void:
 		sword_slash_area.queue_free();
 		attack_finished = true;
 
-# spawn sword attack on frame 4 of attack
+# spawn sword attack hitbox on frame 4 of attack
 func _on_animated_sprite_2d_frame_changed() -> void:
 	if (sprite.frame == 4 && (sprite.animation == "attack_u" || sprite.animation == "attack_l" || sprite.animation == "attack_d" || sprite.animation == "attack_r")): 
 		sword_attack();
-		
 
 func _on_nav_timer_timeout() -> void:
 	navigation_agent_2d.target_position = player.global_position;
