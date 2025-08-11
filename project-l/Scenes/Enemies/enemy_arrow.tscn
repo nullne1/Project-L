@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://lfg2wijfk3q8"]
+
+[ext_resource type="Script" uid="uid://br40sk8w0isgo" path="res://Scenes/Enemies/enemy_arrow.gd" id="1_clxt4"]
+[ext_resource type="Texture2D" uid="uid://di5sqa5o6bbgq" path="res://Assets/Player/arrow.png" id="2_o2b8c"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_h5x2m"]
+size = Vector2(34, 6)
+
+[node name="EnemyArrow" type="CharacterBody2D"]
+script = ExtResource("1_clxt4")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_o2b8c")
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("RectangleShape2D_h5x2m")
+
+[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]

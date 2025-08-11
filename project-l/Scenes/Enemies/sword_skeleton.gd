@@ -2,19 +2,21 @@ extends CharacterBody2D
 
 const SWORD_SLASH_PATH = preload("res://Scenes/Enemies/sword_slash.tscn")
 
-@onready var hp := 100;
-@onready var player: CharacterBody2D = $"../../User/Player"
-@onready var asprite: Sprite2D = $Sprite2D
-@onready var enemy_health_bar: TextureProgressBar = %EnemyHealthBar
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
+@onready var player: CharacterBody2D = $"../../User/Player"
+@onready var enemy_health_bar: TextureProgressBar = %EnemyHealthBar
 @onready var attack_speed_cd: Timer = $AttackSpeedCD
 @onready var navigation_agent_2d: NavigationAgent2D = $NavigationAgent2D
+@onready var collision_shape_2d: CollisionShape2D = $CollisionShape2D
+@onready var click_collision_shape_2d: CollisionShape2D = $ClickHitbox/CollisionShape2D
 
+@export var hp := 100;
 @export var ms := 100;
 var in_range := false;
 var last_direction: String;
 var attack_finished: bool = true;
 var sword_slash_area: Area2D;
+var dead := false;
 
 func _ready() -> void:
 	attack_speed_cd.wait_time = 1;
@@ -35,7 +37,12 @@ func _physics_process(_delta: float) -> void:
 		move_and_slide();
 		
 	if (hp <= 0):
-		queue_free();
+		click_collision_shape_2d.disabled = true;
+		collision_shape_2d.disabled = true;
+		z_index = 0; 
+		set_physics_process(false);
+		dead = true;
+		sprite.play("death");
 
 func sword_attack() -> void:
 	sword_slash_area = SWORD_SLASH_PATH.instantiate();
@@ -75,7 +82,7 @@ func play_direction_attack(direction_target: Vector2, animation: String) -> void
 		last_direction = "_r"
 
 func _on_attack_range_body_entered(body: Node2D) -> void:
-	if (body == player && attack_speed_cd.is_stopped()):
+	if (!dead && body == player && attack_speed_cd.is_stopped()):
 		attack_finished = false;
 		play_direction_attack(player.position, "attack");
 		in_range = true;
@@ -95,7 +102,10 @@ func _on_animated_sprite_2d_animation_finished() -> void:
 
 # spawn sword attack hitbox on frame 4 of attack
 func _on_animated_sprite_2d_frame_changed() -> void:
-	if (sprite.frame == 4 && (sprite.animation == "attack_u" || sprite.animation == "attack_l" || sprite.animation == "attack_d" || sprite.animation == "attack_r")): 
+	if (sprite.frame == 4 && (sprite.animation == "attack_u" 
+						   || sprite.animation == "attack_l" 
+						   || sprite.animation == "attack_d" 
+						   || sprite.animation == "attack_r")): 
 		sword_attack();
 
 func _on_nav_timer_timeout() -> void:
