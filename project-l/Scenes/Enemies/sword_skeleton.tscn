@@ -2,6 +2,8 @@
 
 [ext_resource type="Script" uid="uid://dtml85ip77sn6" path="res://Scenes/Enemies/sword_skeleton.gd" id="1_e281u"]
 [ext_resource type="Texture2D" uid="uid://c2j1xspwynoji" path="res://Assets/Enemies/Skeleton_long_sword.png" id="2_4grbk"]
+[ext_resource type="Texture2D" uid="uid://68rboimd75o" path="res://Assets/UI/UIBundleFree/enemy_health_under.png" id="3_4grbk"]
+[ext_resource type="Texture2D" uid="uid://cjm3fhgqd2n5s" path="res://Assets/UI/UIBundleFree/enemy_health_progress.png" id="3_e281u"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8ej4m"]
 atlas = ExtResource("2_4grbk")
@@ -572,12 +574,6 @@ height = 325.459
 [sub_resource type="CircleShape2D" id="CircleShape2D_1f0kj"]
 radius = 35.0143
 
-[sub_resource type="Gradient" id="Gradient_qb14u"]
-colors = PackedColorArray(1, 0, 0, 1, 1, 0, 0, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_1f0kj"]
-gradient = SubResource("Gradient_qb14u")
-
 [node name="SwordSkeleton" type="CharacterBody2D"]
 z_index = 1
 input_pickable = true
@@ -619,15 +615,17 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -33.0
-offset_top = -38.0
-offset_right = 31.0
-offset_bottom = 26.0
+offset_left = -26.0
+offset_top = -26.0
+offset_right = 24.0
+offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 0
-scale = Vector2(1.03839, 0.147484)
+scale = Vector2(1.038, 1)
 value = 100.0
-texture_progress = SubResource("GradientTexture2D_1f0kj")
+texture_under = ExtResource("3_4grbk")
+texture_progress = ExtResource("3_e281u")
+texture_progress_offset = Vector2(3, 1)
 metadata/_edit_use_anchors_ = true
 
 [node name="AttackSpeedCD" type="Timer" parent="."]

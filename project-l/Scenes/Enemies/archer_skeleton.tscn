@@ -2,6 +2,8 @@
 
 [ext_resource type="Script" uid="uid://ca74hffkhj8fp" path="res://Scenes/Enemies/archer_skeleton.gd" id="1_27us0"]
 [ext_resource type="Texture2D" uid="uid://dj1qbdris8d3r" path="res://Assets/Enemies/archer_skeleton.png" id="2_p6srt"]
+[ext_resource type="Texture2D" uid="uid://68rboimd75o" path="res://Assets/UI/UIBundleFree/enemy_health_under.png" id="3_nhb1b"]
+[ext_resource type="Texture2D" uid="uid://cjm3fhgqd2n5s" path="res://Assets/UI/UIBundleFree/enemy_health_progress.png" id="3_ni7ry"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ue306"]
 atlas = ExtResource("2_p6srt")
@@ -740,12 +742,6 @@ height = 325.459
 [sub_resource type="CircleShape2D" id="CircleShape2D_ufiud"]
 radius = 143.003
 
-[sub_resource type="Gradient" id="Gradient_jjvhh"]
-colors = PackedColorArray(1, 0, 0, 1, 1, 0, 0, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_ja0vv"]
-gradient = SubResource("Gradient_jjvhh")
-
 [node name="ArcherSkeleton" type="CharacterBody2D"]
 script = ExtResource("1_27us0")
 
@@ -783,15 +779,17 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -33.0
-offset_top = -38.0
-offset_right = 31.0
-offset_bottom = 26.0
+offset_left = -26.0
+offset_top = -26.0
+offset_right = 24.0
+offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 0
-scale = Vector2(1.03839, 0.147484)
+scale = Vector2(1.038, 1)
 value = 100.0
-texture_progress = SubResource("GradientTexture2D_ja0vv")
+texture_under = ExtResource("3_nhb1b")
+texture_progress = ExtResource("3_ni7ry")
+texture_progress_offset = Vector2(3, 1)
 metadata/_edit_use_anchors_ = true
 
 [node name="AttackSpeedCD" type="Timer" parent="."]

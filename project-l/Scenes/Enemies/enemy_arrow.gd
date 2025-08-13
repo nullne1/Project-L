@@ -7,7 +7,7 @@ extends CharacterBody2D
 var pos : Vector2;
 var rota : float;
 var direction : float;
-var speed = 500;
+var speed = 400;
 var enemy_to_hit: CharacterBody2D;
 
 func ready() -> void:
