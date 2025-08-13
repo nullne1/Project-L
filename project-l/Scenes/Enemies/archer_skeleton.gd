@@ -1,4 +1,4 @@
-extends CharacterBody2D
+extends Enemy
 
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var player: CharacterBody2D = $"../../User/Player"
@@ -10,12 +10,9 @@ extends CharacterBody2D
 
 const ENEMY_ARROW = preload("res://Scenes/Enemies/enemy_arrow.tscn")
 
-@export var hp := 100;
-@export var ms := 100;
 var in_range := false;
 var last_direction: String;
 var attack_finished: bool = true;
-var dead := false;
 
 func _ready() -> void:
 	attack_speed_cd.wait_time = 1;
@@ -36,6 +33,7 @@ func _physics_process(_delta: float) -> void:
 		move_and_slide();
 		
 	if (hp <= 0):
+		death.emit(self);
 		click_collision_shape_2d.disabled = true;
 		collision_shape_2d.disabled = true;
 		z_index = 0; 

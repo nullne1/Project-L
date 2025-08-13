@@ -191,7 +191,10 @@ func _on_click_hitbox_mouse_exited():
 			hovering_enemy = false;
 		else:
 			hovered_enemies.remove_at(0);
-	
+	else:
+		hovering_enemy = false;
+		Input.set_custom_mouse_cursor(NORMAL_CURSOR);
+			
 func _on_roll_duration_timeout() -> void:
 	rolling = false;
 	move_while_roll = false;

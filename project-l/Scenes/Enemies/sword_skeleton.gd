@@ -1,4 +1,4 @@
-extends CharacterBody2D
+extends Enemy
 
 const SWORD_SLASH_PATH = preload("res://Scenes/Enemies/sword_slash.tscn")
 
@@ -10,13 +10,10 @@ const SWORD_SLASH_PATH = preload("res://Scenes/Enemies/sword_slash.tscn")
 @onready var collision_shape_2d: CollisionShape2D = $CollisionShape2D
 @onready var click_collision_shape_2d: CollisionShape2D = $ClickHitbox/CollisionShape2D
 
-@export var hp := 100;
-@export var ms := 100;
 var in_range := false;
 var last_direction: String;
 var attack_finished: bool = true;
 var sword_slash_area: Area2D;
-var dead := false;
 
 func _ready() -> void:
 	attack_speed_cd.wait_time = 1;
@@ -95,7 +92,7 @@ func _on_attack_range_body_exited(body: Node2D) -> void:
 	
 func _on_animated_sprite_2d_animation_finished() -> void:
 	if (sprite.animation == "attack_u" || sprite.animation == "attack_l" || sprite.animation == "attack_d" || sprite.animation == "attack_r"): 
-		sprite.play("idle" + last_direction)
+		sprite.play("idle" + last_direction);
 		sword_slash_area.find_child("CollisionShape2D").queue_free();
 		sword_slash_area.queue_free();
 		attack_finished = true;
