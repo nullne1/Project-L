@@ -39,6 +39,8 @@ var after_roll_auto_move: bool;
 var dead:= false;
 var move_while_roll: bool;
 var clicked_on_enemy: bool;
+var last_dead_enemy: CharacterBody2D;
+var enemies_tuple: Array;
 
 func _ready() -> void:
 	# Sets animation, attack speed cooldown, and animation frames based on attacks per second
@@ -62,13 +64,13 @@ func _ready() -> void:
 		hearts.append(new_heart);
 	
 func _physics_process(_delta: float) -> void:
-	if (hovering_enemy && enemy && Input.is_action_pressed("attack") && attack_speed_cd.is_stopped()):
+	if (hovering_enemy && enemy && !(enemy == last_dead_enemy) && Input.is_action_pressed("attack") && attack_speed_cd.is_stopped() && !after_roll_auto_move):
 		draw_bow();
 
 	if ((Input.is_action_just_pressed("move") || Input.is_action_pressed("hold_move"))):
 		if (!attack_animation.is_stopped()):
 			cancelled = true;
-		if (rolling):
+		if (rolling && !clicked_on_enemy):
 			move_while_roll = true;
 		move();
 
@@ -162,6 +164,7 @@ func move() -> void:
 				t.queue_free();
 				
 	if (after_roll_auto_move && after_roll_auto_target):
+		after_roll_auto_move = false;
 		after_roll_auto_target.queue_free();
 		
 	target = get_global_mouse_position();
@@ -182,7 +185,10 @@ func _on_click_hitbox_mouse_entered(enemyNodePath : NodePath):
 	if (!clicked_on_enemy):
 		hovered_enemies.append(enemy);
 		enemy = get_node(enemyNodePath);
-
+		enemies_tuple.append(enemy);
+		if (!(enemy in enemies_tuple)):
+			enemy.death.connect(on_enemy_death);
+		
 func _on_click_hitbox_mouse_exited():
 	if (!clicked_on_enemy):
 		if (hovered_enemies.size() == 1):
@@ -191,14 +197,17 @@ func _on_click_hitbox_mouse_exited():
 			hovering_enemy = false;
 		else:
 			hovered_enemies.remove_at(0);
+			hovering_enemy = false;
 	else:
+		hovered_enemies.remove_at(0);
 		hovering_enemy = false;
 		Input.set_custom_mouse_cursor(NORMAL_CURSOR);
 			
 func _on_roll_duration_timeout() -> void:
+	attack_speed_cd.stop();
 	rolling = false;
 	move_while_roll = false;
-	if (after_roll_auto_move && after_roll_auto_target && !move_while_roll):
+	if (after_roll_auto_move && after_roll_auto_target):
 		var dir = to_local(navigation_agent_2d.get_next_path_position()).normalized();
 		velocity = dir * ms;
 		play_direction(after_roll_auto_target.position, "run");
@@ -228,3 +237,9 @@ func _on_animated_sprite_2d_frame_changed() -> void:
 		arrow.global_position = global_position;
 		arrow.global_rotation = direction;
 		get_parent().add_child(arrow);
+
+func on_enemy_death(dead_enemy_path):
+	last_dead_enemy = dead_enemy_path;
+	
+func _on_roll_cd_timeout() -> void:
+	dodge_icon.value = 5;

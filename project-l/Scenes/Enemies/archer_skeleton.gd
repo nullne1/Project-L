@@ -1,7 +1,7 @@
 extends Enemy
 
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
-@onready var player: CharacterBody2D = $"../../User/Player"
+
 @onready var enemy_health_bar: TextureProgressBar = %EnemyHealthBar
 @onready var attack_speed_cd: Timer = $AttackSpeedCD
 @onready var navigation_agent_2d: NavigationAgent2D = $NavigationAgent2D

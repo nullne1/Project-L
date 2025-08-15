@@ -1,6 +1,143 @@
-[gd_scene load_steps=2 format=3 uid="uid://bjq2xhrpyr3m0"]
+[gd_scene load_steps=8 format=3 uid="uid://bjq2xhrpyr3m0"]
 
 [ext_resource type="Script" uid="uid://3wxqme1205qb" path="res://Scenes/Enemies/enemy.gd" id="1_613su"]
+[ext_resource type="Texture2D" uid="uid://68rboimd75o" path="res://Assets/UI/UIBundleFree/enemy_health_under.png" id="2_x1rqp"]
+[ext_resource type="Texture2D" uid="uid://cjm3fhgqd2n5s" path="res://Assets/UI/UIBundleFree/enemy_health_progress.png" id="3_ubio8"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_miwey"]
+animations = [{
+"frames": [],
+"loop": false,
+"name": &"attack_d",
+"speed": 20.0
+}, {
+"frames": [],
+"loop": false,
+"name": &"attack_l",
+"speed": 20.0
+}, {
+"frames": [],
+"loop": false,
+"name": &"attack_r",
+"speed": 20.0
+}, {
+"frames": [],
+"loop": false,
+"name": &"attack_u",
+"speed": 20.0
+}, {
+"frames": [],
+"loop": false,
+"name": &"death",
+"speed": 16.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"idle_d",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"idle_l",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"idle_r",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"idle_u",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"walk_d",
+"speed": 8.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"walk_l",
+"speed": 8.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"walk_r",
+"speed": 8.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"walk_u",
+"speed": 8.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_l8da7"]
+radius = 12.0
+height = 42.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_haj6g"]
+radius = 16.3715
+height = 325.459
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_u0emo"]
+radius = 29.0
 
 [node name="CharacterBody2D" type="CharacterBody2D"]
 script = ExtResource("1_613su")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(1, 0.957)
+sprite_frames = SubResource("SpriteFrames_miwey")
+animation = &"walk_u"
+autoplay = "walk_r"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 6)
+shape = SubResource("CapsuleShape2D_l8da7")
+debug_color = Color(3.17663e-06, 0.585575, 0.776292, 0.42)
+
+[node name="ClickHitbox" type="Area2D" parent="."]
+position = Vector2(-32, -64)
+scale = Vector2(1.03839, 0.147484)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ClickHitbox"]
+position = Vector2(30.8169, 474.628)
+shape = SubResource("CapsuleShape2D_haj6g")
+debug_color = Color(0.965163, 0, 0.488374, 0.42)
+
+[node name="AttackRange" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackRange"]
+position = Vector2(0, 7)
+shape = SubResource("CircleShape2D_u0emo")
+debug_color = Color(0, 0.398146, 0.919015, 0.42)
+
+[node name="EnemyHealthBar" type="TextureProgressBar" parent="."]
+unique_name_in_owner = true
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -26.0
+offset_top = -26.0
+offset_right = 24.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 0
+scale = Vector2(1.038, 1)
+value = 100.0
+texture_under = ExtResource("2_x1rqp")
+texture_progress = ExtResource("3_ubio8")
+texture_progress_offset = Vector2(3, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="AttackSpeedCD" type="Timer" parent="."]
+one_shot = true
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+
+[node name="NavTimer" type="Timer" parent="."]
+wait_time = 0.1
+autostart = true

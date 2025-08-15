@@ -3,7 +3,6 @@ extends Enemy
 const SWORD_SLASH_PATH = preload("res://Scenes/Enemies/sword_slash.tscn")
 
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
-@onready var player: CharacterBody2D = $"../../User/Player"
 @onready var enemy_health_bar: TextureProgressBar = %EnemyHealthBar
 @onready var attack_speed_cd: Timer = $AttackSpeedCD
 @onready var navigation_agent_2d: NavigationAgent2D = $NavigationAgent2D

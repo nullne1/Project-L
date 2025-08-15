@@ -28,7 +28,7 @@ func _ready() -> void:
 	waves_data = {
 		"wave1": {
 			"num_sword": 5,
-			"num_archer": 0
+			"num_archer": 1
 		},
 		"wave2": {
 			"num_sword": 0,
@@ -52,7 +52,7 @@ func _ready() -> void:
 		},
 	}
 	
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if (wave_cd.is_stopped() && enemies.is_empty()):
 		spawn_wave()
 		wave_cd.start();
@@ -104,3 +104,6 @@ func get_spawn() -> Vector2:
 func _on_enemy_death(enemy_node):
 	enemies.erase(enemy_node);
 	
+func _on_game_time_timeout() -> void:
+	pass
+	#print(enemies);
