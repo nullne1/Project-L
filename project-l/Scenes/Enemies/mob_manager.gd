@@ -28,7 +28,7 @@ func _ready() -> void:
 	waves_data = {
 		"wave1": {
 			"num_sword": 5,
-			"num_archer": 1
+			"num_archer": 0
 		},
 		"wave2": {
 			"num_sword": 0,
@@ -72,8 +72,8 @@ func spawn(enemy_type: PackedScene) -> void:
 	enemy.enemies = enemies;
 	enemy.death.connect(_on_enemy_death);
 	var click_hitbox = enemy.find_child("ClickHitbox");
-	click_hitbox.mouse_entered.connect(player._on_click_hitbox_mouse_entered.bind(enemy.get_path()));
-	click_hitbox.mouse_exited.connect(player._on_click_hitbox_mouse_exited);
+	click_hitbox.mouse_entered.connect(player._on_click_hitbox_mouse_entered.bind(enemy));
+	click_hitbox.mouse_exited.connect(player._on_click_hitbox_mouse_exited.bind(enemy));
 
 
 func get_spawn() -> Vector2:

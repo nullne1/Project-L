@@ -101,7 +101,7 @@ func _on_animated_sprite_2d_animation_finished() -> void:
 
 # spawn sword attack hitbox on frame 4 of attack
 func _on_animated_sprite_2d_frame_changed() -> void:
-	if (sprite.frame == 7 && (sprite.animation == "attack_u" 
+	if (sprite.frame == 9 && (sprite.animation == "attack_u" 
 						   || sprite.animation == "attack_l" 
 						   || sprite.animation == "attack_d" 
 						   || sprite.animation == "attack_r")): 

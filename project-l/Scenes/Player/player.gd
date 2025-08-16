@@ -23,12 +23,9 @@ const HEART = preload("res://Scenes/Player/heart.tscn");
 var hearts: Array;
 var attack_speed: float;
 var target := position;
-var hovering_enemy: bool;
 var attacking: bool;
 var rolling: bool;
 var enemy: CharacterBody2D;
-var enemy_to_hit: CharacterBody2D;
-var hovered_enemies: Array = [];
 var target_arr = Array();
 var roll_target: Vector2;
 var roll_speed: float;
@@ -38,9 +35,7 @@ var after_roll_auto_target: Area2D;
 var after_roll_auto_move: bool;
 var dead:= false;
 var move_while_roll: bool;
-var clicked_on_enemy: bool;
-var last_dead_enemy: CharacterBody2D;
-var enemies_tuple: Array;
+var clicked_on_enemy: CharacterBody2D;
 
 func _ready() -> void:
 	# Sets animation, attack speed cooldown, and animation frames based on attacks per second
@@ -64,7 +59,8 @@ func _ready() -> void:
 		hearts.append(new_heart);
 	
 func _physics_process(_delta: float) -> void:
-	if (hovering_enemy && enemy && !(enemy == last_dead_enemy) && Input.is_action_pressed("attack") && attack_speed_cd.is_stopped() && !after_roll_auto_move):
+	if (enemy && Input.is_action_pressed("attack") && attack_speed_cd.is_stopped() && !after_roll_auto_move):
+		clicked_on_enemy = enemy;
 		draw_bow();
 
 	if ((Input.is_action_just_pressed("move") || Input.is_action_pressed("hold_move"))):
@@ -131,7 +127,6 @@ func play_direction(direction_target: Vector2, animation: String) -> void:
 func draw_bow() -> void:
 	if (target_arr.size() > 0 && target_arr.get(0)): target_arr.get(0).queue_free();
 	cancelled = false;
-	clicked_on_enemy = true;
 	play_direction(enemy.position, "draw");
 	attack_animation.start();
 	attack_speed_cd.start();
@@ -179,30 +174,17 @@ func move() -> void:
 	
 	play_direction(target, "run");
 
-func _on_click_hitbox_mouse_entered(enemyNodePath : NodePath):
-	hovering_enemy = true;
-	Input.set_custom_mouse_cursor(HOVER_CURSOR)
-	if (!clicked_on_enemy):
-		hovered_enemies.append(enemy);
-		enemy = get_node(enemyNodePath);
-		enemies_tuple.append(enemy);
-		if (!(enemy in enemies_tuple)):
-			enemy.death.connect(on_enemy_death);
+func _on_click_hitbox_mouse_entered(enemy_node: CharacterBody2D):
+	if (enemy != enemy_node):
+		enemy = enemy_node;
+		Input.set_custom_mouse_cursor(HOVER_CURSOR);
 		
-func _on_click_hitbox_mouse_exited():
-	if (!clicked_on_enemy):
-		if (hovered_enemies.size() == 1):
-			hovered_enemies.remove_at(0);
-			Input.set_custom_mouse_cursor(NORMAL_CURSOR);
-			hovering_enemy = false;
-		else:
-			hovered_enemies.remove_at(0);
-			hovering_enemy = false;
-	else:
-		hovered_enemies.remove_at(0);
-		hovering_enemy = false;
+		
+func _on_click_hitbox_mouse_exited(enemy_node: CharacterBody2D):
+	if (enemy == enemy_node):
+		enemy = null;
 		Input.set_custom_mouse_cursor(NORMAL_CURSOR);
-			
+		
 func _on_roll_duration_timeout() -> void:
 	attack_speed_cd.stop();
 	rolling = false;
@@ -225,21 +207,20 @@ func _on_animated_sprite_2d_animation_finished() -> void:
 		sprite.play("idle" + last_direction);
 
 func _on_animated_sprite_2d_frame_changed() -> void:
-	if (sprite && sprite.frame == 8 && enemy && (sprite.animation == "draw_u" 
+	if (sprite && sprite.frame == 8 && (sprite.animation == "draw_u" 
 											  || sprite.animation == "draw_l" 
 											  || sprite.animation == "draw_d" 
 											  || sprite.animation == "draw_r")):
-		clicked_on_enemy = false;
-		var direction = position.angle_to_point(enemy.position);
+		var direction = position.angle_to_point(clicked_on_enemy.position);
 		var arrow = ARROW_PATH.instantiate() as CharacterBody2D;
-		arrow.enemy_to_hit = enemy;
+		arrow.enemy_to_hit = clicked_on_enemy;
 		arrow.direction = direction;
 		arrow.global_position = global_position;
 		arrow.global_rotation = direction;
 		get_parent().add_child(arrow);
 
-func on_enemy_death(dead_enemy_path):
-	last_dead_enemy = dead_enemy_path;
+#func on_enemy_death(dead_enemy_path):
+	#last_dead_enemy = dead_enemy_path;
 	
 func _on_roll_cd_timeout() -> void:
 	dodge_icon.value = 5;

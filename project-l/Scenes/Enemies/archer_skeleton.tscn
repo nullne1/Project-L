@@ -736,8 +736,8 @@ radius = 12.0
 height = 42.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_0xvk1"]
-radius = 16.3715
-height = 325.459
+radius = 15.4085
+height = 325.458
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ufiud"]
 radius = 143.003
@@ -748,7 +748,7 @@ script = ExtResource("1_27us0")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 scale = Vector2(1, 0.957)
 sprite_frames = SubResource("SpriteFrames_lwgu8")
-animation = &"attack_l"
+animation = &"idle_d"
 autoplay = "walk_r"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

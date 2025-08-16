@@ -875,13 +875,12 @@ height = 4.61539
 motion_mode = 1
 wall_min_slide_angle = 0.0
 script = ExtResource("1_onrkg")
-attacks_per_second = 3.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -1.78814e-07)
 scale = Vector2(0.17, 0.17)
 sprite_frames = SubResource("SpriteFrames_gyc8k")
-animation = &"idle_d"
+animation = &"draw_r"
 autoplay = "idle_d"
 
 [node name="Camera2D" type="Camera2D" parent="."]
