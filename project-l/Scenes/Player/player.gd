@@ -17,7 +17,7 @@ const HOVER_CURSOR = preload("res://Assets/UI/StoneCursorWenrexa/PNG/05.png");
 const NORMAL_CURSOR = preload("res://Assets/UI/StoneCursorWenrexa/PNG/01.png");
 const HEART = preload("res://Scenes/Player/heart.tscn");
 
-@export var num_hearts := 3;
+@export var num_hearts := 5;
 @export var ms := 140;
 @export var attacks_per_second := 2.5;
 var hearts: Array;
@@ -74,6 +74,9 @@ func _physics_process(_delta: float) -> void:
 		if (!attack_animation.is_stopped()):
 			cancelled = true;
 		roll();
+	
+	if (Input.is_action_pressed("throw_dagger")):
+		throw_dagger();
 		
 	if (position.distance_to(target) > 3 && !move_while_roll && !rolling):
 		move_and_slide();
@@ -84,13 +87,19 @@ func _physics_process(_delta: float) -> void:
 	if (!roll_cd.is_stopped()):
 		dodge_icon.value = dodge_icon.max_value - roll_cd.time_left;
 
-	if (after_roll_auto_move && sprite.animation == "idle_u" || sprite.animation == "idle_l" || sprite.animation == "idle_d" || sprite.animation == "idle_r"):
+	if (after_roll_auto_move && sprite.animation == "idle_u" 
+							 || sprite.animation == "idle_l" 
+							 || sprite.animation == "idle_d" 
+							 || sprite.animation == "idle_r"):
 		#velocity = Vector2.ZERO;
 		after_roll_auto_move = false;
 	
 	# abilities
 	
 	# death
+
+func throw_dagger() -> void:
+	pass
 
 func death() -> void:
 	set_physics_process(false);
@@ -126,11 +135,11 @@ func play_direction(direction_target: Vector2, animation: String) -> void:
 
 func draw_bow() -> void:
 	if (target_arr.size() > 0 && target_arr.get(0)): target_arr.get(0).queue_free();
+	velocity = Vector2(0, 0);
 	cancelled = false;
 	play_direction(enemy.position, "draw");
 	attack_animation.start();
 	attack_speed_cd.start();
-	velocity = Vector2(0, 0);
 
 func roll() -> void:
 	if (!roll_cd.is_stopped()): return;
@@ -208,9 +217,9 @@ func _on_animated_sprite_2d_animation_finished() -> void:
 
 func _on_animated_sprite_2d_frame_changed() -> void:
 	if (sprite && sprite.frame == 8 && (sprite.animation == "draw_u" 
-											  || sprite.animation == "draw_l" 
-											  || sprite.animation == "draw_d" 
-											  || sprite.animation == "draw_r")):
+									 || sprite.animation == "draw_l" 
+									 || sprite.animation == "draw_d" 
+									 || sprite.animation == "draw_r")):
 		var direction = position.angle_to_point(clicked_on_enemy.position);
 		var arrow = ARROW_PATH.instantiate() as CharacterBody2D;
 		arrow.enemy_to_hit = clicked_on_enemy;

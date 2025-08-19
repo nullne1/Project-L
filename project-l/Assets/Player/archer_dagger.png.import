@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cgk2hmpm02y1k"
-path="res://.godot/imported/spike_3.png-17fda6680d58db57ac30d99c604d1871.ctex"
+uid="uid://salcw3qv6r3o"
+path="res://.godot/imported/archer_dagger.png-078711ae4feb63c95753b7194efe696c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Environment/spike_3.png"
-dest_files=["res://.godot/imported/spike_3.png-17fda6680d58db57ac30d99c604d1871.ctex"]
+source_file="res://Assets/Player/archer_dagger.png"
+dest_files=["res://.godot/imported/archer_dagger.png-078711ae4feb63c95753b7194efe696c.ctex"]
 
 [params]
 

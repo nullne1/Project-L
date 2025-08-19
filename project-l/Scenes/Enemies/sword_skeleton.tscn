@@ -584,7 +584,7 @@ script = ExtResource("1_e281u")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 scale = Vector2(1, 0.957)
 sprite_frames = SubResource("SpriteFrames_m4x7e")
-animation = &"idle_d"
+animation = &"attack_r"
 autoplay = "walk_r"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

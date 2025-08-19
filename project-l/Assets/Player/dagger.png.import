@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c31i40qq540ln"
-path="res://.godot/imported/torch_3.png-5ad86e480e4a78641d458fa0c0f47bb4.ctex"
+uid="uid://lygg1i8q2ma5"
+path="res://.godot/imported/dagger.png-b93fa90c517f087b20f24b1b01761465.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Environment/torch_3.png"
-dest_files=["res://.godot/imported/torch_3.png-5ad86e480e4a78641d458fa0c0f47bb4.ctex"]
+source_file="res://Assets/Player/dagger.png"
+dest_files=["res://.godot/imported/dagger.png-b93fa90c517f087b20f24b1b01761465.ctex"]
 
 [params]
 
