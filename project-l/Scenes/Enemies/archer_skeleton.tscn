@@ -1,4 +1,4 @@
-[gd_scene load_steps=103 format=3 uid="uid://ck10i7h7a8ls1"]
+[gd_scene load_steps=102 format=3 uid="uid://ck10i7h7a8ls1"]
 
 [ext_resource type="Script" uid="uid://ca74hffkhj8fp" path="res://Scenes/Enemies/archer_skeleton.gd" id="1_27us0"]
 [ext_resource type="Texture2D" uid="uid://dj1qbdris8d3r" path="res://Assets/Enemies/archer_skeleton.png" id="2_p6srt"]
@@ -735,14 +735,12 @@ animations = [{
 radius = 12.0
 height = 42.0
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_0xvk1"]
-radius = 15.4085
-height = 325.458
-
 [sub_resource type="CircleShape2D" id="CircleShape2D_ufiud"]
 radius = 143.003
 
 [node name="ArcherSkeleton" type="CharacterBody2D"]
+z_index = -1
+z_as_relative = false
 script = ExtResource("1_27us0")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
@@ -760,10 +758,9 @@ debug_color = Color(3.17663e-06, 0.585575, 0.776292, 0.42)
 position = Vector2(-32, -64)
 scale = Vector2(1.03839, 0.147484)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ClickHitbox"]
-position = Vector2(30.8169, 474.628)
-shape = SubResource("CapsuleShape2D_0xvk1")
-debug_color = Color(0.965163, 0, 0.488374, 0.42)
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="ClickHitbox"]
+position = Vector2(16.3715, 488.189)
+polygon = PackedVector2Array(5.77818, -169.51, 0.96303, -27.1216, 2.88909, 135.608, 26.0018, 135.608, 27.9278, -27.1216, 23.1127, -169.51)
 
 [node name="AttackRange" type="Area2D" parent="."]
 
@@ -779,10 +776,10 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -26.0
-offset_top = -26.0
-offset_right = 24.0
-offset_bottom = -20.0
+offset_left = -29.0
+offset_top = 28.0
+offset_right = 27.0
+offset_bottom = 36.0
 grow_horizontal = 2
 grow_vertical = 0
 scale = Vector2(1.038, 1)

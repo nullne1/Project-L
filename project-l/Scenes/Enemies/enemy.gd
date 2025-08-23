@@ -3,22 +3,23 @@ extends CharacterBody2D
 signal death(enemy_node)
 
 const HEART_DROP = preload("res://Scenes/Pickups/heart_drop.tscn")
+const STATUS_INDICATOR = preload("res://Scenes/UI/status_indicator.tscn")
+@export var hp := 100;
+@export var ms := 100;
+
+var dead := false;
+var enemies: Array;
+var in_range := false;
+var last_direction: String;
+var attack_finished: bool = true;
 
 @onready var player: CharacterBody2D = $"../../User/Player"
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var attack_speed_cd: Timer = $AttackSpeedCD
 @onready var navigation_agent_2d: NavigationAgent2D = $NavigationAgent2D
 @onready var collision_shape_2d: CollisionShape2D = $CollisionShape2D
-@onready var click_collision_shape_2d: CollisionShape2D = $ClickHitbox/CollisionShape2D
+@onready var click_collision_shape_2d: CollisionPolygon2D = $ClickHitbox/CollisionPolygon2D
 @onready var enemy_health_bar: TextureProgressBar = %EnemyHealthBar
-
-@export var hp := 100;
-@export var ms := 100;
-var dead := false;
-var enemies: Array;
-var in_range := false;
-var last_direction: String;
-var attack_finished: bool = true;
 
 func _ready() -> void:
 	attack_speed_cd.wait_time = 1;
@@ -68,14 +69,26 @@ func play_direction_attack(direction_target: Vector2, animation: String) -> void
 		last_direction = "_r"
 
 func on_hit() -> void:
-	enemy_health_bar.value -= 20;
+	var player_dmg = player.dmg;
+	enemy_health_bar.value -= player_dmg;
+	hp -= player_dmg;
+	var label = STATUS_INDICATOR.instantiate() as Label;
+	label.text = str(player_dmg);
+	label.position = Vector2(position.x - 30, position.y - 30);
+	get_parent().add_child(label);
 	
 func on_death() -> void:
+	var player_dmg = player.dmg;
+	hp -= player_dmg;
+	var label = STATUS_INDICATOR.instantiate() as Label;
+	label.text = str(player_dmg);
+	label.position = Vector2(position.x - 30, position.y - 30);
+	get_parent().add_child(label);
+	
 	enemy_health_bar.queue_free();
 	death.emit(self);
 	click_collision_shape_2d.set_deferred("disabled", true);
 	collision_shape_2d.set_deferred("disabled", true);
-	z_index = 0; 
 	set_physics_process(false);
 	sprite.play("death");
 	dead = true;

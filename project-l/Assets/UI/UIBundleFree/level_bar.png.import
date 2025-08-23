@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://f2qnyh48fynl"
-path="res://.godot/imported/noun-dodge-5640784.png-0f982baa73dc55f8cdd4814b8144d9c6.ctex"
+uid="uid://bsvkbdw63wol"
+path="res://.godot/imported/level_bar.png-39a81bf611d383278c3ee2ca8d76d5ff.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/UI/noun-dodge-5640784.png"
-dest_files=["res://.godot/imported/noun-dodge-5640784.png-0f982baa73dc55f8cdd4814b8144d9c6.ctex"]
+source_file="res://Assets/UI/UIBundleFree/level_bar.png"
+dest_files=["res://.godot/imported/level_bar.png-39a81bf611d383278c3ee2ca8d76d5ff.ctex"]
 
 [params]
 

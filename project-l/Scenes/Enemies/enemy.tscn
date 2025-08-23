@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://bjq2xhrpyr3m0"]
+[gd_scene load_steps=7 format=3 uid="uid://bjq2xhrpyr3m0"]
 
 [ext_resource type="Script" uid="uid://3wxqme1205qb" path="res://Scenes/Enemies/enemy.gd" id="1_613su"]
 [ext_resource type="Texture2D" uid="uid://68rboimd75o" path="res://Assets/UI/UIBundleFree/enemy_health_under.png" id="2_x1rqp"]
@@ -76,14 +76,12 @@ animations = [{
 radius = 12.0
 height = 42.0
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_haj6g"]
-radius = 16.3715
-height = 325.459
-
 [sub_resource type="CircleShape2D" id="CircleShape2D_u0emo"]
 radius = 29.0
 
 [node name="CharacterBody2D" type="CharacterBody2D"]
+z_index = -1
+z_as_relative = false
 script = ExtResource("1_613su")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
@@ -101,10 +99,9 @@ debug_color = Color(3.17663e-06, 0.585575, 0.776292, 0.42)
 position = Vector2(-32, -64)
 scale = Vector2(1.03839, 0.147484)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ClickHitbox"]
-position = Vector2(30.8169, 474.628)
-shape = SubResource("CapsuleShape2D_haj6g")
-debug_color = Color(0.965163, 0, 0.488374, 0.42)
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="ClickHitbox"]
+position = Vector2(16.3715, 488.189)
+polygon = PackedVector2Array(5.77818, -169.51, 0.96303, -27.1216, 2.88909, 135.608, 26.0018, 135.608, 27.9278, -27.1216, 23.1127, -169.51)
 
 [node name="AttackRange" type="Area2D" parent="."]
 

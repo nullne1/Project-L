@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3 uid="uid://bbpgh3mmlyocf"]
+
+[ext_resource type="Script" uid="uid://604ydxgasgpl" path="res://Scenes/UI/status_indicator.gd" id="1_f8n44"]
+
+[node name="Label" type="Label"]
+z_index = 1
+offset_right = 61.0
+offset_bottom = 49.0
+text = "Placeholder
+
+"
+horizontal_alignment = 1
+script = ExtResource("1_f8n44")
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.5
+one_shot = true
+autostart = true

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://kgmwwcb2cpma"
-path="res://.godot/imported/dodge_1.png-26c4de986f8a4bf93d2677a65410128e.ctex"
+uid="uid://dr0dorib8dngt"
+path="res://.godot/imported/level_bar_progress.png-651511d229c8730354a3bcf545fc31c1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/UI/dodge_1.png"
-dest_files=["res://.godot/imported/dodge_1.png-26c4de986f8a4bf93d2677a65410128e.ctex"]
+source_file="res://Assets/UI/UIBundleFree/level_bar_progress.png"
+dest_files=["res://.godot/imported/level_bar_progress.png-651511d229c8730354a3bcf545fc31c1.ctex"]
 
 [params]
 
