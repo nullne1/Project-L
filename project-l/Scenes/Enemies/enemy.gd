@@ -12,6 +12,7 @@ var enemies: Array;
 var in_range := false;
 var last_direction: String;
 var attack_finished: bool = true;
+var level: int;
 
 @onready var player: CharacterBody2D = $"../../User/Player"
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D

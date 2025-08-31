@@ -18,6 +18,7 @@ var distance_factor = 75;
 var viewport: Vector2;
 var max_enemies = 10;
 var time: float;
+var enemy_level: int;
 
 var waves_data: Dictionary;
 var wave_num:= 1;
@@ -70,6 +71,7 @@ func spawn(enemy_type: PackedScene) -> void:
 	add_child(enemy);
 	enemies.append(enemy);
 	enemy.enemies = enemies;
+	enemy.level = enemy_level;
 	enemy.death.connect(_on_enemy_death);
 	var click_hitbox = enemy.find_child("ClickHitbox");
 	click_hitbox.mouse_entered.connect(player._on_click_hitbox_mouse_entered.bind(enemy));

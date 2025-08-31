@@ -1,4 +1,7 @@
-extends Projectile
+class_name Projectile
+
+extends CharacterBody2D
+
 signal enemy_to_hit_death;
 signal hit_enemy_to_hit;
 
@@ -33,7 +36,3 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 		else:
 			enemy_to_hit_death.connect(enemy_to_hit.on_death);
 			enemy_to_hit_death.emit();
-			
-			
-	
-		

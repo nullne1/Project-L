@@ -37,6 +37,7 @@ var action_buffered
 @onready var heart_h_box_container: HBoxContainer = %HeartHBoxContainer
 @onready var dagger_icon: TextureProgressBar = %DaggerIcon
 @onready var level_progress: TextureProgressBar = %LevelProgress
+@onready var mob_manager: Node = %MobManager
 
 @onready var attack_speed_cd: Timer = $AttackSpeedCD
 @onready var attack_animation: Timer = $AttackAnimation
@@ -265,3 +266,7 @@ func _on_roll_cd_timeout() -> void:
 
 func _on_dagger_cd_timeout() -> void:
 	dagger_icon.value = dagger_icon.min_value;
+
+func _on_level_progress_value_changed(value: float) -> void:
+	if (value == 100):
+		level += 1;
