@@ -201,6 +201,8 @@ func move() -> void:
 func add_xp() -> void:
 	xp += 10;
 	level_progress.value += 10;
+	dmg += 5;
+	gain_heart();
 	var label = STATUS_INDICATOR.instantiate() as Label;
 	label.text = "10xp";
 	label.position = Vector2(position.x - 30, position.y - 30);
