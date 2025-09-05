@@ -1,4 +1,5 @@
 extends Projectile
+<<<<<<< HEAD
 	
 func _on_area_2d_body_entered(body: Node2D) -> void:
 	if (body == tile_map):
@@ -15,3 +16,5 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 			
 	
 		
+=======
+>>>>>>> ee5561501bf29b2e2c1a55cbc2d9d264ccf9167e

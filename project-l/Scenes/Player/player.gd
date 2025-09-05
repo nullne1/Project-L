@@ -32,6 +32,8 @@ var move_while_roll: bool;
 var clicked_on_enemy: CharacterBody2D;
 var throw_dagger_arr: Array = ["throw_dagger_u", "throw_dagger_l", "throw_dagger_d", "throw_dagger_r"];
 var action_buffered
+var dagger_throw_queued: bool;
+var dagger_cancelled: bool;
 
 @onready var dodge_icon: TextureProgressBar = %DodgeIcon
 @onready var heart_h_box_container: HBoxContainer = %HeartHBoxContainer
@@ -72,23 +74,39 @@ func _ready() -> void:
 		hearts.append(new_heart);
 	
 func _physics_process(_delta: float) -> void:
-	if (sprite.animation not in throw_dagger_arr):
+	if (enemy && Input.is_action_pressed("attack") && attack_speed_cd.is_stopped() && !after_roll_auto_move):
+		# delete after making buffer system
+		if (dagger_throw_queued):
+			dagger_cancelled = true;
+			dagger_throw_queued = false;
+		clicked_on_enemy = enemy;
+		draw_bow();
+
+	if ((Input.is_action_just_pressed("move") || Input.is_action_pressed("hold_move"))):
+		if (rolling && !clicked_on_enemy):
+			move_while_roll = true;
+			# delete after making buffer system
+		if (dagger_throw_queued):
+			dagger_cancelled = true;
+			dagger_throw_queued = false;
 			
-		if (enemy && Input.is_action_pressed("attack") && attack_speed_cd.is_stopped() && !after_roll_auto_move):
-			clicked_on_enemy = enemy;
-			draw_bow();
+		move();
 
-		if ((Input.is_action_just_pressed("move") || Input.is_action_pressed("hold_move"))):
-			if (rolling && !clicked_on_enemy):
-				move_while_roll = true;
-			move();
-
-		if (Input.is_action_pressed("roll")):
-			roll();
+	if (Input.is_action_pressed("roll")):
+		# delete after making buffer system
+		if (dagger_throw_queued):
+			dagger_cancelled = true;
+			dagger_throw_queued = false;
+		roll();
 		
 	if (enemy && Input.is_action_pressed("throw_dagger") && dagger_cd.is_stopped() && !after_roll_auto_move):
 		clicked_on_enemy = enemy;
 		throw_dagger();
+	
+	# delete after making buffer system
+	if (dagger_cancelled):
+		dagger_cd.stop();
+		dagger_icon.value = 0;
 		
 	if (position.distance_to(target) > 3 && !move_while_roll && !rolling):
 		move_and_slide();
@@ -109,6 +127,8 @@ func _physics_process(_delta: float) -> void:
 		after_roll_auto_move = false;
 
 func throw_dagger() -> void:
+	dagger_cancelled = false;
+	dagger_throw_queued = true;
 	if (target_arr.size() > 0 && target_arr.get(0)): target_arr.get(0).queue_free();
 	velocity = Vector2(0, 0);
 	dagger_cd.start();
@@ -252,6 +272,8 @@ func _on_animated_sprite_2d_frame_changed() -> void:
 									   || sprite.animation == "throw_dagger_l" 
 									   || sprite.animation == "throw_dagger_d" 
 									   || sprite.animation == "throw_dagger_r")):
+		dagger_cancelled = false;
+		dagger_throw_queued = false;
 		var direction = position.angle_to_point(clicked_on_enemy.position);
 		var dagger = DAGGER.instantiate() as CharacterBody2D;
 		dagger.enemy_to_hit = clicked_on_enemy;

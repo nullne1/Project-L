@@ -4,12 +4,25 @@ signal add_player_xp;
 
 @onready var dagger_icon: TextureProgressBar = $"../../Control/CanvasLayer/TextureRect/HBoxContainer/DaggerIcon"
 
+<<<<<<< HEAD
+=======
+func ready() -> void:
+	global_position = pos;
+	global_rotation = rota;
+	enemy_to_hit_death.connect(enemy_to_hit.on_death);
+	hit_enemy_to_hit.connect(enemy_to_hit.on_hit);
+	
+func _physics_process(_delta: float) -> void:
+	velocity = Vector2(speed, 0).rotated(direction);
+	move_and_slide();
+	
+>>>>>>> ee5561501bf29b2e2c1a55cbc2d9d264ccf9167e
 func _on_area_2d_body_entered(body: Node2D) -> void:
 	if (body == tile_map):
 		queue_free();
 	elif (body == enemy_to_hit):
 		queue_free();
-		if (enemy_to_hit.hp - 20 >= 20):
+		if (enemy_to_hit.hp - player.dmg >= player.dmg):
 			hit_enemy_to_hit.connect(enemy_to_hit.on_hit);
 			hit_enemy_to_hit.emit();
 		else:
@@ -19,6 +32,7 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 			add_player_xp.emit();
 			enemy_to_hit_death.connect(enemy_to_hit.on_death);
 			enemy_to_hit_death.emit();
+		
 			
 			
 	
