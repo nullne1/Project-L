@@ -1470,6 +1470,7 @@ offset_right = 130.0
 offset_bottom = -80.552
 grow_horizontal = 2
 grow_vertical = 0
+max_value = 50.0
 texture_under = ExtResource("8_d1ilt")
 texture_progress = ExtResource("9_6iyac")
 texture_progress_offset = Vector2(5, 5)
@@ -1481,7 +1482,7 @@ unique_name_in_owner = true
 texture_filter = 1
 position = Vector2(2.38419e-07, -14)
 scale = Vector2(5, 5)
-num_hearts = 100000
+num_hearts = 100
 
 [node name="MobManager" type="Node" parent="."]
 unique_name_in_owner = true

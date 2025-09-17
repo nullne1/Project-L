@@ -1,0 +1,52 @@
+[gd_scene load_steps=8 format=3 uid="uid://bhiga352ux7re"]
+
+[ext_resource type="Texture2D" uid="uid://c1gqy0a001i5d" path="res://Assets/UI/UIBundleFree/level_up_anim.png" id="1_hbffp"]
+[ext_resource type="Script" uid="uid://crcpvk8fi0vt5" path="res://Scenes/Player/level_up_animation.gd" id="2_sp488"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sp488"]
+atlas = ExtResource("1_hbffp")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ulkad"]
+atlas = ExtResource("1_hbffp")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yng73"]
+atlas = ExtResource("1_hbffp")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jcs0b"]
+atlas = ExtResource("1_hbffp")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_h0m2d"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sp488")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ulkad")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yng73")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jcs0b")
+}, {
+"duration": 1.0,
+"texture": null
+}],
+"loop": false,
+"name": &"default",
+"speed": 3.0
+}]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D"]
+z_index = -1
+scale = Vector2(0.3, 0.3)
+sprite_frames = SubResource("SpriteFrames_h0m2d")
+autoplay = "default"
+frame = 4
+frame_progress = 1.0
+script = ExtResource("2_sp488")

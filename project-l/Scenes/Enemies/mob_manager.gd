@@ -15,41 +15,44 @@ var enemy_for_player: CharacterBody2D;
 var enemy_num := 0;
 var rng = RandomNumberGenerator.new();
 var distance_factor = 75;
-var viewport: Vector2;
 var max_enemies = 10;
 var time: float;
-var enemy_level: int;
 
 var waves_data: Dictionary;
 var wave_num:= 1;
 
 func _ready() -> void:
 	spawn_rate.wait_time = 2;
-	viewport = get_viewport().size / 2;
 	waves_data = {
 		"wave1": {
 			"num_sword": 5,
-			"num_archer": 0
+			"num_archer": 0,
+			"level": 1
 		},
 		"wave2": {
 			"num_sword": 0,
-			"num_archer": 5
+			"num_archer": 5,
+			"level": 2
 		},
 		"wave3": {
 			"num_sword": 3,
-			"num_archer": 3
+			"num_archer": 3,
+			"level": 3
 		},
 		"wave4": {
 			"num_sword": 8,
-			"num_archer": 2
+			"num_archer": 2,
+			"level": 4
 		},
 		"wave5": {
 			"num_sword": 0,
-			"num_archer": 7
+			"num_archer": 7,
+			"level": 5
 		},
 		"wave6": {
 			"num_sword": 8,
-			"num_archer": 8
+			"num_archer": 8,
+			"level": 6
 		},
 	}
 	
@@ -60,18 +63,18 @@ func _process(_delta: float) -> void:
 	
 func spawn_wave() -> void:
 	for i in waves_data.get("wave" + str(wave_num)).get("num_sword"):
-		spawn(SWORD_SKELETON);
+		spawn(SWORD_SKELETON, waves_data.get("wave" + str(wave_num)).get("level"));
 	for i in waves_data.get("wave" + str(wave_num)).get("num_archer"):
-		spawn(ARCHER_SKELETON);
+		spawn(ARCHER_SKELETON, waves_data.get("wave" + str(wave_num)).get("level"));
 	wave_num += 1;
 	
-func spawn(enemy_type: PackedScene) -> void:
+func spawn(enemy_type: PackedScene, level: int) -> void:
 	var enemy := enemy_type.instantiate() as CharacterBody2D;
+	enemy.level = level;
 	enemy.global_position = get_spawn();
 	add_child(enemy);
 	enemies.append(enemy);
 	enemy.enemies = enemies;
-	enemy.level = enemy_level;
 	enemy.death.connect(_on_enemy_death);
 	var click_hitbox = enemy.find_child("ClickHitbox");
 	click_hitbox.mouse_entered.connect(player._on_click_hitbox_mouse_entered.bind(enemy));
@@ -82,7 +85,7 @@ func get_spawn() -> Vector2:
 	var x : float;
 	var y : float;
 	var pos := player.position;
-	
+	var viewport = get_viewport().size / 2;
 	match rng.randi_range(0, 3):
 		# left spawn
 		0:

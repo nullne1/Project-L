@@ -4,7 +4,7 @@ signal death(enemy_node)
 
 const HEART_DROP = preload("res://Scenes/Pickups/heart_drop.tscn")
 const STATUS_INDICATOR = preload("res://Scenes/UI/status_indicator.tscn")
-@export var hp := 100;
+var hp := 100;
 @export var ms := 100;
 
 var dead := false;
@@ -24,6 +24,9 @@ var level: int;
 
 func _ready() -> void:
 	attack_speed_cd.wait_time = 1;
+	hp += level * 20;
+	enemy_health_bar.max_value = hp;
+	enemy_health_bar.value = enemy_health_bar.max_value;
 
 func _physics_process(_delta: float) -> void:
 	# keeps attacking if player in range

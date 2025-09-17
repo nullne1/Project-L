@@ -7,12 +7,12 @@ const NORMAL_CURSOR = preload("res://Assets/UI/StoneCursorWenrexa/PNG/01.png")
 const HEART = preload("res://Scenes/Player/heart.tscn")
 const DAGGER = preload("res://Scenes/Player/dagger.tscn")
 const STATUS_INDICATOR = preload("res://Scenes/UI/status_indicator.tscn")
+const LEVEL_UP_ANIMATION = preload("res://Scenes/Player/level_up_animation.tscn")
 
 @export var num_hearts: int;
 @export var ms := 140;
 @export var attacks_per_second := 2.5;
 @export var level: int;
-@export var xp: int;
 @export var dmg := 20;
 
 var hearts: Array;
@@ -125,6 +125,14 @@ func _physics_process(_delta: float) -> void:
 							 || sprite.animation == "idle_d" 
 							 || sprite.animation == "idle_r"):
 		after_roll_auto_move = false;
+		
+func add_xp() -> void:
+	level_progress.value += 25;
+	var label = STATUS_INDICATOR.instantiate() as Label;
+	label.add_theme_color_override("font_color", Color("blue"));
+	label.text = str(50) + "xp";
+	label.position = Vector2(position.x - 30, position.y - 30);
+	get_parent().add_child(label);
 
 func throw_dagger() -> void:
 	dagger_cancelled = false;
@@ -218,16 +226,6 @@ func move() -> void:
 	if (!rolling):
 		play_direction(target, "run");
 
-func add_xp() -> void:
-	xp += 10;
-	level_progress.value += 10;
-	dmg += 5;
-	gain_heart();
-	var label = STATUS_INDICATOR.instantiate() as Label;
-	label.text = "10xp";
-	label.position = Vector2(position.x - 30, position.y - 30);
-	get_parent().add_child(label);
-
 func _on_click_hitbox_mouse_entered(enemy_node: CharacterBody2D):
 	if (enemy != enemy_node):
 		enemy = enemy_node;
@@ -292,5 +290,27 @@ func _on_dagger_cd_timeout() -> void:
 	dagger_icon.value = dagger_icon.min_value;
 
 func _on_level_progress_value_changed(value: float) -> void:
-	if (value == 100):
+	if (value >= level_progress.max_value):
 		level += 1;
+		dmg += 2;
+		level_progress.value = 0;
+		gain_heart();
+		var level_up = LEVEL_UP_ANIMATION.instantiate() as AnimatedSprite2D;
+		add_child(level_up);
+		level_up.position += Vector2(0, 4);
+		
+		var label = STATUS_INDICATOR.instantiate() as Label;
+		label.add_theme_color_override("font_color", Color("blue"));
+		label.text = "Level Up!";
+		label.position = Vector2(position.x - 30, position.y - 30);
+		get_parent().add_child(label);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
