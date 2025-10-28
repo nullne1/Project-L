@@ -2,11 +2,13 @@ class_name Enemy
 extends CharacterBody2D
 signal death(enemy_node)
 
+
 const HEART_DROP = preload("res://Scenes/Pickups/heart_drop.tscn")
 const STATUS_INDICATOR = preload("res://Scenes/UI/status_indicator.tscn")
+const ENEMY_HEALTH_EXECUTE_PROGRESS = preload("res://Assets/UI/UIBundleFree/enemy_health_execute_progress.png")
+const ENEMY_EXECUTE_HEALTH_UNDER = preload("res://Assets/UI/UIBundleFree/enemy_execute_health_under.png")
 var hp := 100;
 @export var ms := 100;
-
 var dead := false;
 var enemies: Array;
 var in_range := false;
@@ -24,7 +26,7 @@ var level: int;
 
 func _ready() -> void:
 	attack_speed_cd.wait_time = 1;
-	hp += level * 20;
+	#hp += level * 20;
 	enemy_health_bar.max_value = hp;
 	enemy_health_bar.value = enemy_health_bar.max_value;
 
@@ -74,8 +76,13 @@ func play_direction_attack(direction_target: Vector2, animation: String) -> void
 
 func on_hit() -> void:
 	var player_dmg = player.dmg;
-	enemy_health_bar.value -= player_dmg;
+	# detect if next hit will execute
+	if (hp - player_dmg * 2 <= 0):
+		enemy_health_bar.texture_under = ENEMY_EXECUTE_HEALTH_UNDER;
+		enemy_health_bar.texture_progress = ENEMY_HEALTH_EXECUTE_PROGRESS;
+		enemy_health_bar.texture_progress_offset = Vector2(3.0, 2.0);
 	hp -= player_dmg;
+	enemy_health_bar.value = hp;
 	var label = STATUS_INDICATOR.instantiate() as Label;
 	label.text = str(player_dmg);
 	label.position = Vector2(position.x - 30, position.y - 30);
@@ -84,6 +91,7 @@ func on_hit() -> void:
 func on_death() -> void:
 	var player_dmg = player.dmg;
 	hp -= player_dmg;
+	# spawn dmg number
 	var label = STATUS_INDICATOR.instantiate() as Label;
 	label.text = str(player_dmg);
 	label.position = Vector2(position.x - 30, position.y - 30);
@@ -96,6 +104,7 @@ func on_death() -> void:
 	set_physics_process(false);
 	sprite.play("death");
 	dead = true;
+	# spawn heart
 	if (randi() % 2 == 1):
 		var heart = HEART_DROP.instantiate() as Area2D;
 		heart.global_position = Vector2(position.x + 3, position.y - 15);

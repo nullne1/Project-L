@@ -8,8 +8,9 @@ const HEART = preload("res://Scenes/Player/heart.tscn")
 const DAGGER = preload("res://Scenes/Player/dagger.tscn")
 const STATUS_INDICATOR = preload("res://Scenes/UI/status_indicator.tscn")
 const LEVEL_UP_ANIMATION = preload("res://Scenes/Player/level_up_animation.tscn")
+const UPGRADE_MENU = preload("res://Scenes/UI/LevelUI/upgrade_menu.tscn")
 
-@export var num_hearts: int;
+var num_hearts := 100;
 @export var ms := 140;
 @export var attacks_per_second := 2.5;
 @export var level: int;
@@ -34,6 +35,7 @@ var throw_dagger_arr: Array = ["throw_dagger_u", "throw_dagger_l", "throw_dagger
 var action_buffered
 var dagger_throw_queued: bool;
 var dagger_cancelled: bool;
+var increase_xp_amount:= 100;
 
 @onready var dodge_icon: TextureProgressBar = %DodgeIcon
 @onready var heart_h_box_container: HBoxContainer = %HeartHBoxContainer
@@ -127,10 +129,10 @@ func _physics_process(_delta: float) -> void:
 		after_roll_auto_move = false;
 		
 func add_xp() -> void:
-	level_progress.value += 25;
+	level_progress.value += increase_xp_amount;
 	var label = STATUS_INDICATOR.instantiate() as Label;
 	label.add_theme_color_override("font_color", Color("blue"));
-	label.text = str(50) + "xp";
+	label.text = str(increase_xp_amount) + "xp";
 	label.position = Vector2(position.x - 30, position.y - 30);
 	get_parent().add_child(label);
 
@@ -301,16 +303,14 @@ func _on_level_progress_value_changed(value: float) -> void:
 		
 		var label = STATUS_INDICATOR.instantiate() as Label;
 		label.add_theme_color_override("font_color", Color("blue"));
+		label.add_theme_color_override("font_outline_color", Color("green"));
 		label.text = "Level Up!";
 		label.position = Vector2(position.x - 30, position.y - 30);
 		get_parent().add_child(label);
 		
-		
-		
-		
-		
-		
-		
-		
-		
+		var upgrade_menu = UPGRADE_MENU.instantiate() as Control
+		var upgrade1 = upgrade_menu.find_child("Button1", true);
+		add_child(upgrade_menu);
+		get_tree().paused = true
+
 		

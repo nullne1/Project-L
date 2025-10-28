@@ -32,7 +32,7 @@ func _ready() -> void:
 		"wave2": {
 			"num_sword": 0,
 			"num_archer": 5,
-			"level": 2
+			"level": 1
 		},
 		"wave3": {
 			"num_sword": 3,

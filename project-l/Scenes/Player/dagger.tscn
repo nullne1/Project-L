@@ -1,20 +1,59 @@
-[gd_scene load_steps=4 format=3 uid="uid://c1pi0j2cfr205"]
+[gd_scene load_steps=9 format=3 uid="uid://c1pi0j2cfr205"]
 
 [ext_resource type="Script" uid="uid://bomxtognbxdvg" path="res://Scenes/Player/dagger.gd" id="1_g1brv"]
 [ext_resource type="Texture2D" uid="uid://lygg1i8q2ma5" path="res://Assets/Player/dagger.png" id="2_g1brv"]
+[ext_resource type="Texture2D" uid="uid://i4crx23pbfv6" path="res://Assets/Player/dagger_ai.png" id="3_uxs7b"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_h5x2m"]
-size = Vector2(14, 6)
+size = Vector2(35, 4)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uxs7b"]
+atlas = ExtResource("3_uxs7b")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_31ls8"]
+atlas = ExtResource("3_uxs7b")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bawdn"]
+atlas = ExtResource("3_uxs7b")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_bawdn"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uxs7b")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_31ls8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bawdn")
+}],
+"loop": true,
+"name": &"default",
+"speed": 12.0
+}]
 
 [node name="Dagger" type="CharacterBody2D"]
 script = ExtResource("1_g1brv")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+visible = false
 texture = ExtResource("2_g1brv")
 
 [node name="Area2D" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(5.5, 0)
 shape = SubResource("RectangleShape2D_h5x2m")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(3, 0)
+scale = Vector2(0.6, 0.6)
+sprite_frames = SubResource("SpriteFrames_bawdn")
+autoplay = "default"
+frame_progress = 0.26397
 
 [connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]

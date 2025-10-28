@@ -37,9 +37,9 @@ animations = [{
 "duration": 1.0,
 "texture": null
 }],
-"loop": false,
+"loop": true,
 "name": &"default",
-"speed": 3.0
+"speed": 12.0
 }]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D"]
@@ -47,6 +47,8 @@ z_index = -1
 scale = Vector2(0.3, 0.3)
 sprite_frames = SubResource("SpriteFrames_h0m2d")
 autoplay = "default"
-frame = 4
-frame_progress = 1.0
+frame_progress = 0.244497
 script = ExtResource("2_sp488")
+
+[connection signal="animation_finished" from="." to="." method="_on_animation_finished"]
+[connection signal="animation_looped" from="." to="." method="_on_animation_looped"]

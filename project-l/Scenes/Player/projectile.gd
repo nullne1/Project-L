@@ -12,7 +12,7 @@ signal hit_enemy_to_hit;
 var pos : Vector2;
 var rota : float;
 var direction : float;
-var speed = 450;
+var speed = 400;
 var enemy_to_hit: CharacterBody2D;
 
 func ready() -> void:
@@ -30,9 +30,11 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 		queue_free();
 	elif (body == enemy_to_hit):
 		queue_free();
-		if (enemy_to_hit.hp - player.dmg >= player.dmg):
+		# enemy hit
+		if (enemy_to_hit.hp - player.dmg > 0):
 			hit_enemy_to_hit.connect(enemy_to_hit.on_hit);
 			hit_enemy_to_hit.emit();
+		# enemy death
 		else:
 			enemy_to_hit_death.connect(enemy_to_hit.on_death);
 			enemy_to_hit_death.emit();
