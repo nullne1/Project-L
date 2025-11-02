@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=4 uid="uid://bjk1u0b1tb48r"]
+[gd_scene load_steps=17 format=4 uid="uid://bjk1u0b1tb48r"]
 
 [ext_resource type="PackedScene" uid="uid://be281pixkehmv" path="res://Scenes/Player/player.tscn" id="2_8gbba"]
 [ext_resource type="Texture2D" uid="uid://cnnb17bfopkl6" path="res://Assets/Environment/Map/decorative.png" id="2_21xkr"]
@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://xurhhu8or1ym" path="res://Assets/Environment/Map/mainlevbuild.png" id="8_344ge"]
 [ext_resource type="Texture2D" uid="uid://bsvkbdw63wol" path="res://Assets/UI/UIBundleFree/level_bar.png" id="8_d1ilt"]
 [ext_resource type="Texture2D" uid="uid://dr0dorib8dngt" path="res://Assets/UI/UIBundleFree/level_bar_progress.png" id="9_6iyac"]
+[ext_resource type="Script" uid="uid://dywrx4084eesl" path="res://Scenes/upgrade_manager.gd" id="11_6iyac"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ynf5e"]
 texture = ExtResource("8_344ge")
@@ -1481,6 +1482,9 @@ unique_name_in_owner = true
 texture_filter = 1
 position = Vector2(2.38419e-07, -14)
 scale = Vector2(5, 5)
+
+[node name="UpgradeManager" type="Node" parent="User"]
+script = ExtResource("11_6iyac")
 
 [node name="MobManager" type="Node" parent="."]
 unique_name_in_owner = true

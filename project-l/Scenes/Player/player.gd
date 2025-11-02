@@ -1,5 +1,7 @@
 extends CharacterBody2D
 
+signal level_up
+
 const ARROW_PATH = preload("res://Scenes/Player/arrow.tscn")
 const TARGET_PATH = preload("res://Scenes/Player/target.tscn")
 const HOVER_CURSOR = preload("res://Assets/UI/StoneCursorWenrexa/PNG/05.png")
@@ -8,14 +10,14 @@ const HEART = preload("res://Scenes/Player/heart.tscn")
 const DAGGER = preload("res://Scenes/Player/dagger.tscn")
 const STATUS_INDICATOR = preload("res://Scenes/UI/status_indicator.tscn")
 const LEVEL_UP_ANIMATION = preload("res://Scenes/Player/level_up_animation.tscn")
-const UPGRADE_MENU = preload("res://Scenes/UI/LevelUI/upgrade_menu.tscn")
 
-var num_hearts := 100;
 @export var ms := 140;
-@export var attacks_per_second := 2.5;
+@export var attacks_per_second := 0.67;
 @export var level: int;
 @export var dmg := 20;
 
+var num_hearts := 100;
+var max_hearts := 100;
 var hearts: Array;
 var attack_speed: float;
 var target := position;
@@ -52,6 +54,8 @@ var increase_xp_amount:= 100;
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var navigation_agent_2d: NavigationAgent2D = $NavigationAgent2D
 @onready var dagger_cd: Timer = $DaggerCD
+@onready var upgrade_manager: Node = $"../UpgradeManager"
+
 
 func _ready() -> void:
 	# Sets animation, attack speed cooldown, and animation frames based on attacks per second
@@ -70,7 +74,7 @@ func _ready() -> void:
 	dagger_icon.max_value = dagger_cd.wait_time;
 	
 	# hearts
-	for i in num_hearts:
+	for i in max_hearts:
 		var new_heart = HEART.instantiate() as TextureRect;
 		heart_h_box_container.add_child(new_heart);
 		hearts.append(new_heart);
@@ -156,9 +160,12 @@ func lose_heart() -> void:
 	if (hearts.back()):
 		hearts.back().queue_free();
 		hearts.pop_back();
+		num_hearts -= 1;
 	if (hearts.is_empty()): death();
 	
 func gain_heart() -> void:
+	if (num_hearts + 1 > max_hearts):
+		return;
 	var new_heart = HEART.instantiate() as TextureRect;
 	heart_h_box_container.add_child(new_heart);
 	hearts.append(new_heart);
@@ -293,13 +300,13 @@ func _on_dagger_cd_timeout() -> void:
 
 func _on_level_progress_value_changed(value: float) -> void:
 	if (value >= level_progress.max_value):
+		level_up.emit();
 		level += 1;
-		dmg += 2;
 		level_progress.value = 0;
 		gain_heart();
-		var level_up = LEVEL_UP_ANIMATION.instantiate() as AnimatedSprite2D;
-		add_child(level_up);
-		level_up.position += Vector2(0, 4);
+		var level_up_animation = LEVEL_UP_ANIMATION.instantiate() as AnimatedSprite2D;
+		add_child(level_up_animation);
+		level_up_animation.position += Vector2(0, 4);
 		
 		var label = STATUS_INDICATOR.instantiate() as Label;
 		label.add_theme_color_override("font_color", Color("blue"));
@@ -307,10 +314,4 @@ func _on_level_progress_value_changed(value: float) -> void:
 		label.text = "Level Up!";
 		label.position = Vector2(position.x - 30, position.y - 30);
 		get_parent().add_child(label);
-		
-		var upgrade_menu = UPGRADE_MENU.instantiate() as Control
-		var upgrade1 = upgrade_menu.find_child("Button1", true);
-		add_child(upgrade_menu);
-		get_tree().paused = true
-
 		
