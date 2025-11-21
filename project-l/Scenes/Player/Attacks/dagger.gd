@@ -14,8 +14,7 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 		queue_free();
 		# enemy hit
 		if (enemy_to_hit.hp - player.dmg > 0):
-			hit_enemy_to_hit.connect(enemy_to_hit.on_hit);
-			hit_enemy_to_hit.emit();
+			enemy_to_hit.on_hit();
 		# enemy death
 		else:
 			# connect signals for adding xp and enemy death on enemy death
@@ -23,8 +22,7 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 			player.dagger_cd.stop();
 			add_player_xp.connect(player.add_xp);
 			add_player_xp.emit();
-			enemy_to_hit_death.connect(enemy_to_hit.on_death);
-			enemy_to_hit_death.emit();
+			enemy_to_hit.on_death();
 		
 			
 			

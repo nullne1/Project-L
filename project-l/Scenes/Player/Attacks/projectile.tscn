@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://iiiu0yeq4yh0"]
 
-[ext_resource type="Script" uid="uid://c23uhdch5l0di" path="res://Scenes/Player/projectile.gd" id="1_mhv6k"]
+[ext_resource type="Script" uid="uid://c23uhdch5l0di" path="res://Scenes/Player/Attacks/projectile.gd" id="1_mhv6k"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5gqvx"]
 size = Vector2(34, 6)

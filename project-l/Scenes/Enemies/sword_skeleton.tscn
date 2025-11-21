@@ -563,9 +563,7 @@ animations = [{
 "speed": 8.0
 }]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_1f0kj"]
-radius = 12.0
-height = 46.0
+[sub_resource type="CircleShape2D" id="CircleShape2D_4grbk"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_1f0kj"]
 radius = 35.0143
@@ -586,7 +584,7 @@ autoplay = "walk_r"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 6)
-shape = SubResource("CapsuleShape2D_1f0kj")
+shape = SubResource("CircleShape2D_4grbk")
 debug_color = Color(3.17663e-06, 0.585575, 0.776292, 0.42)
 
 [node name="ClickHitbox" type="Area2D" parent="."]
@@ -629,6 +627,7 @@ metadata/_edit_group_ = true
 one_shot = true
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+simplify_path = true
 
 [node name="NavTimer" type="Timer" parent="."]
 wait_time = 0.1

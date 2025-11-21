@@ -2,12 +2,12 @@ extends CharacterBody2D
 
 signal level_up
 
-const ARROW_PATH = preload("res://Scenes/Player/arrow.tscn")
+const ARROW_PATH = preload("res://Scenes/Player/Attacks/arrow.tscn")
 const TARGET_PATH = preload("res://Scenes/Player/target.tscn")
 const HOVER_CURSOR = preload("res://Assets/UI/StoneCursorWenrexa/PNG/05.png")
 const NORMAL_CURSOR = preload("res://Assets/UI/StoneCursorWenrexa/PNG/01.png")
 const HEART = preload("res://Scenes/Player/heart.tscn")
-const DAGGER = preload("res://Scenes/Player/dagger.tscn")
+const DAGGER = preload("res://Scenes/Player/Attacks/dagger.tscn")
 const STATUS_INDICATOR = preload("res://Scenes/UI/status_indicator.tscn")
 const LEVEL_UP_ANIMATION = preload("res://Scenes/Player/level_up_animation.tscn")
 
@@ -16,6 +16,7 @@ const LEVEL_UP_ANIMATION = preload("res://Scenes/Player/level_up_animation.tscn"
 @export var level: int;
 @export var dmg := 20;
 
+var upgrades: Array[BaseProjectileStrategy] = [];
 var num_hearts := 100;
 var max_hearts := 100;
 var hearts: Array;
@@ -270,6 +271,8 @@ func _on_animated_sprite_2d_frame_changed() -> void:
 									 || sprite.animation == "draw_r")):
 		var direction = position.angle_to_point(clicked_on_enemy.position);
 		var arrow = ARROW_PATH.instantiate() as CharacterBody2D;
+		for upgrade in upgrades:
+			upgrade.apply_upgrade(arrow);
 		arrow.enemy_to_hit = clicked_on_enemy;
 		arrow.direction = direction;
 		arrow.global_position = global_position;

@@ -1,6 +1,6 @@
 [gd_scene load_steps=9 format=3 uid="uid://c1pi0j2cfr205"]
 
-[ext_resource type="Script" uid="uid://bomxtognbxdvg" path="res://Scenes/Player/dagger.gd" id="1_g1brv"]
+[ext_resource type="Script" uid="uid://bomxtognbxdvg" path="res://Scenes/Player/Attacks/dagger.gd" id="1_g1brv"]
 [ext_resource type="Texture2D" uid="uid://lygg1i8q2ma5" path="res://Assets/Player/dagger.png" id="2_g1brv"]
 [ext_resource type="Texture2D" uid="uid://i4crx23pbfv6" path="res://Assets/Player/dagger_ai.png" id="3_uxs7b"]
 
